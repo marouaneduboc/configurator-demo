@@ -1,0 +1,6 @@
+.DS_Store
+model.blend
+model.blend1
+node_modules/
+_preview*.png
+*.tgz
