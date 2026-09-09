@@ -193,7 +193,61 @@
       padding: 4px 6px; border-radius: var(--glass-r-pill); overflow-x: auto; scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
     }
-    .hint { display: none; }
+    .hint {
+      position: fixed; z-index: 22;
+      top: 50%; right: calc(22px + env(safe-area-inset-right, 0px));
+      left: auto; bottom: auto;
+      transform: translateY(-50%);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 148px;
+      padding: 18px 16px 14px;
+      border-radius: var(--glass-r-panel);
+      font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(255,255,255,.78);
+      pointer-events: auto;
+      cursor: pointer;
+      appearance: none; border: 0; font-family: inherit;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    body.ready .hint { display: flex; animation: hintIn .55s ease .35s both; }
+    body.ready .hint.hidden { display: none; }
+    @media (pointer: coarse) {
+      body.ready .hint { display: none; }
+    }
+    @keyframes hintIn {
+      from { opacity: 0; transform: translateY(-50%) translateX(12px); }
+      to { opacity: 1; transform: translateY(-50%) translateX(0); }
+    }
+    .hint .wasd {
+      grid-template-columns: repeat(3, 34px);
+      gap: 7px;
+      margin: 0;
+    }
+    .hint .wasd kbd, .hint kbd {
+      height: 34px; min-width: 34px; padding: 0;
+      border-radius: 8px; font-size: 11px;
+    }
+    .hint .hint-row {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin: 0; letter-spacing: .1em;
+      color: rgba(255,255,255,.62);
+    }
+    .hint .hint-row kbd {
+      height: 26px; min-width: 26px; font-size: 10px;
+    }
+    .hint .hint-dismiss {
+      margin: 2px 0 0;
+      padding-top: 10px;
+      width: 100%;
+      border-top: 1px solid rgba(197,164,110,.22);
+      font-size: 9px; letter-spacing: .16em;
+      color: rgba(255,255,255,.42);
+    }
+    .hint:hover .hint-dismiss { color: rgba(244, 239, 228, .78); }
     aside {
       position: fixed; z-index: 25; right: auto;
       top: 50%; left: 22px; bottom: auto;
@@ -305,21 +359,27 @@
     #loader {
       position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
       background:
-        radial-gradient(ellipse at 42% 28%, #1a5a7a 0%, transparent 55%),
-        radial-gradient(ellipse at 70% 80%, #0a2a48 0%, transparent 50%),
-        linear-gradient(165deg, #0c4a6e 0%, #0a3558 42%, #061e36 100%);
+        radial-gradient(ellipse at 50% 18%, rgba(197,164,110,.16) 0%, transparent 42%),
+        radial-gradient(ellipse at 18% 88%, rgba(31,77,58,.35) 0%, transparent 46%),
+        radial-gradient(ellipse at 88% 70%, rgba(110,31,44,.22) 0%, transparent 40%),
+        linear-gradient(168deg, #071525 0%, #0b1f3a 48%, #061018 100%);
     }
-    #loader.hide { opacity: 0; pointer-events: none; transition: opacity 1s ease; }
+    #loader.hide { opacity: 0; pointer-events: none; transition: opacity 0.85s ease; }
     .load-card {
-      width: min(420px, calc(100vw - 40px)); padding: 32px; border-radius: 24px; text-align: center;
+      width: min(440px, calc(100vw - 40px)); padding: 36px 32px 28px; border-radius: 24px; text-align: center;
       color: #e8f2f8;
     }
-    .load-card h2 { font-family: "Cormorant Garamond", serif; font-size: 36px; margin: 8px 0 6px; color: #f4efe4; }
-    .load-card p { color: rgba(232,242,248,.72); font-size: 13px; }
+    .load-kicker {
+      font-size: 10px; letter-spacing: .32em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 6px;
+    }
+    .load-card h2 { font-family: "Cormorant Garamond", serif; font-size: 38px; margin: 0 0 8px; color: #f4efe4; font-weight: 600; }
+    .load-card p { color: rgba(232,242,248,.72); font-size: 13px; line-height: 1.45; }
     .load-card .mark {
       border-color: rgba(197,164,110,.85);
       color: var(--gold);
       background: rgba(6,30,54,.35);
+      margin: 0 auto 14px;
     }
     .load-card .pct { color: rgba(244,239,228,.9); }
     .load-card #loadDetail { color: rgba(232,242,248,.55); }
@@ -327,6 +387,22 @@
       background: rgba(6,30,54,.45);
       border-color: rgba(197,164,110,.5);
     }
+    .load-legend {
+      margin-top: 22px; padding-top: 16px;
+      border-top: 1px solid rgba(197,164,110,.28);
+    }
+    .wasd {
+      display: grid; grid-template-columns: repeat(3, 30px); gap: 5px;
+      justify-content: center; margin: 0 auto 10px; width: max-content;
+    }
+    .wasd kbd, .keys-hint kbd {
+      display: grid; place-items: center; height: 28px; min-width: 28px;
+      border-radius: 6px; border: 1px solid rgba(197,164,110,.55);
+      background: rgba(6, 18, 36, .45); color: #f4efe4;
+      font: 600 10px Outfit, system-ui, sans-serif; letter-spacing: .04em;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
+    }
+    .load-legend p { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: rgba(232,242,248,.5); }
     .brand-mark {
       position: fixed;
       z-index: 55;
@@ -401,6 +477,7 @@
       }
       .handle { display: block; }
       .frame { inset: 6px; }
+      body.ready .hint { display: none !important; }
       .brand-mark {
         right: 14px;
         bottom: calc(72px + var(--safe-b));
@@ -428,14 +505,22 @@
   </div>
   <div id="loader">
     <div class="load-card glass">
-      <div class="mark" style="margin:0 auto;">A</div>
-      <h2>ABIM Classic 144</h2>
-      <p id="loadMsg">Loading the yacht…</p>
+      <div class="mark">A</div>
+      <p class="load-kicker">ABIM Atelier</p>
+      <h2>Classic 144</h2>
+      <p id="loadMsg">Launching the yacht…</p>
       <div class="track" id="track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <i id="bar"></i>
       </div>
       <div class="pct" id="pct">0%</div>
-      <div id="loadDetail">Preparing 5.2 MB model</div>
+      <div id="loadDetail">Receiving a 6 MB Draco hull</div>
+      <div class="load-legend">
+        <div class="wasd" aria-hidden="true">
+          <span></span><kbd>W</kbd><span></span>
+          <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+        </div>
+        <p>Walk the decks · drag to look</p>
+      </div>
     </div>
   </div>
   <img class="brand-mark" src="./assets/tiyan-logo.png?v=4" alt="TIYAN" width="160" height="113" decoding="async" />
@@ -470,7 +555,15 @@
       <button class="go" id="next" type="button">Continue</button>
     </footer>
   </aside>
-  <div class="hint glass" id="hint">Drag to orbit · scroll to frame</div>
+  <button type="button" class="hint glass" id="hint" aria-label="Hide movement controls">
+    <div class="wasd" aria-hidden="true">
+      <span></span><kbd>W</kbd><span></span>
+      <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+    </div>
+    <p class="hint-row"><kbd>Q</kbd><kbd>E</kbd> rise</p>
+    <p class="hint-row">drag to look</p>
+    <p class="hint-dismiss">Click to hide</p>
+  </button>
   <div class="modal" id="modal">
     <div class="ticket glass">
       <div class="kicker" style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--green);">ABIM Atelier</div>
@@ -652,58 +745,6 @@
         Math.round(lerp(a[2], b[2], t))
       ];
     }
-    /** Re-unwrap mesh UVs — authored GLB UVs are stretched; box / cylinder / planar fixes that. */
-    function reprojectUVs(geometry, mode = 'box', scale = 1) {
-      if (!geometry?.attributes?.position) return;
-      if (!geometry.attributes.normal) geometry.computeVertexNormals();
-      geometry.computeBoundingBox();
-      const pos = geometry.attributes.position;
-      const nrm = geometry.attributes.normal;
-      const box = geometry.boundingBox;
-      const size = new THREE.Vector3();
-      box.getSize(size);
-      const uvs = new Float32Array(pos.count * 2);
-      const p = new THREE.Vector3();
-      const n = new THREE.Vector3();
-      const cx = (box.min.x + box.max.x) * 0.5;
-      const cz = (box.min.z + box.max.z) * 0.5;
-      for (let i = 0; i < pos.count; i++) {
-        p.fromBufferAttribute(pos, i);
-        n.fromBufferAttribute(nrm, i);
-        let u = 0, v = 0;
-        if (mode === 'planarY') {
-          u = ((p.x - box.min.x) / Math.max(size.x, 1e-4)) * scale;
-          v = ((p.z - box.min.z) / Math.max(size.z, 1e-4)) * scale;
-        } else if (mode === 'cylinderY') {
-          u = (Math.atan2(p.x - cx, p.z - cz) / (Math.PI * 2) + 0.5) * scale;
-          v = ((p.y - box.min.y) / Math.max(size.y, 1e-4)) * scale * 0.55;
-        } else {
-          const ax = Math.abs(n.x), ay = Math.abs(n.y), az = Math.abs(n.z);
-          if (ay >= ax && ay >= az) {
-            u = ((p.x - box.min.x) / Math.max(size.x, 1e-4)) * scale;
-            v = ((p.z - box.min.z) / Math.max(size.z, 1e-4)) * scale;
-          } else if (ax >= az) {
-            u = ((p.z - box.min.z) / Math.max(size.z, 1e-4)) * scale;
-            v = ((p.y - box.min.y) / Math.max(size.y, 1e-4)) * scale;
-          } else {
-            u = ((p.x - box.min.x) / Math.max(size.x, 1e-4)) * scale;
-            v = ((p.y - box.min.y) / Math.max(size.y, 1e-4)) * scale;
-          }
-        }
-        uvs[i * 2] = u;
-        uvs[i * 2 + 1] = v;
-      }
-      geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-      geometry.attributes.uv.needsUpdate = true;
-    }
-    function uvModeFor(cat, name = '') {
-      if (cat === 'hull' || cat === 'anti' || cat === 'rope') return { mode: 'cylinderY', scale: 2.4 };
-      if (cat === 'deck' || /floor|Stairs|Parquet|Deck/i.test(name)) return { mode: 'planarY', scale: 1.8 };
-      if (cat === 'textile') return { mode: 'planarY', scale: 1.35 };
-      if (cat === 'wood' || cat === 'interior' || cat === 'roof') return { mode: 'box', scale: 2.0 };
-      if (cat === 'super' || cat === 'trim') return { mode: 'box', scale: 1.4 };
-      return { mode: 'box', scale: 1.6 };
-    }
     function makeAoMap(size = 512) {
       // Soft contact grit only — NEVER edge-framed tiles (those read as hull/canopy stripes).
       const c = document.createElement('canvas'); c.width = c.height = size;
@@ -858,9 +899,9 @@
       const ctx = c.getContext('2d');
       // Near-white base so MeshPhysicalMaterial color tint keeps motif readable
       ctx.fillStyle = '#f4f0ea'; ctx.fillRect(0, 0, size, size);
-      const ink = 'rgba(22, 18, 14, 0.52)';
-      const inkSoft = 'rgba(22, 18, 14, 0.28)';
-      const chalk = 'rgba(255, 255, 255, 0.3)';
+      const ink = 'rgba(22, 18, 14, 0.34)';
+      const inkSoft = 'rgba(22, 18, 14, 0.16)';
+      const chalk = 'rgba(255, 255, 255, 0.22)';
       if (pattern === 'stripe') {
         for (let x = 0; x < size; x += 12) {
           ctx.fillStyle = x % 24 === 0 ? ink : inkSoft;
@@ -891,23 +932,17 @@
           }
         }
       } else if (pattern === 'houndstooth') {
-        // Softer woven look: bigger cells + slight blur + lower contrast
-        const cell = 28;
-        ctx.filter = 'blur(0.8px)';
-        for (let y = 0; y < size; y += cell) {
-          for (let x = 0; x < size; x += cell) {
-            const on = ((x / cell) + (y / cell)) % 2 === 0;
-            ctx.fillStyle = on ? 'rgba(18, 18, 22, 0.22)' : 'rgba(255,255,255,0.06)';
-            ctx.beginPath();
-            ctx.moveTo(x + cell * 0.5, y);
-            ctx.lineTo(x + cell, y + cell * 0.35);
-            ctx.lineTo(x + cell * 0.5, y + cell);
-            ctx.lineTo(x, y + cell * 0.65);
-            ctx.closePath();
-            ctx.fill();
-          }
+        // Fine even weave — no diamonds. Reads as charcoal cloth on chairs/cushions.
+        ctx.fillStyle = '#d8d4ce';
+        ctx.fillRect(0, 0, size, size);
+        for (let y = 0; y < size; y += 2) {
+          ctx.fillStyle = y % 4 === 0 ? 'rgba(40,42,46,0.18)' : 'rgba(255,255,255,0.12)';
+          ctx.fillRect(0, y, size, 1);
         }
-        ctx.filter = 'none';
+        for (let x = 0; x < size; x += 2) {
+          ctx.fillStyle = x % 4 === 0 ? 'rgba(40,42,46,0.14)' : 'rgba(255,255,255,0.08)';
+          ctx.fillRect(x, 0, 1, size);
+        }
       } else if (pattern === 'diamond') {
         const cell = 32;
         for (let y = -cell; y < size + cell; y += cell) {
@@ -971,13 +1006,57 @@
       }
       const map = new THREE.CanvasTexture(c);
       map.wrapS = map.wrapT = THREE.RepeatWrapping;
-      const rep = (pattern === 'botanical' || pattern === 'damask') ? 1.7 : (pattern === 'houndstooth' ? 1.0 : (pattern === 'stripe' ? 3.6 : 2.4));
+      const rep = (pattern === 'botanical' || pattern === 'damask') ? 2.2 : (pattern === 'houndstooth' ? 6.5 : (pattern === 'stripe' ? 4.2 : 3.2));
       map.repeat.set(rep, rep);
       map.colorSpace = THREE.SRGBColorSpace;
       map.anisotropy = rendererMaxAniso();
       return map;
     }
     const tex = {};
+    const pbr = { ready: false };
+    function prepPbrTex(t, colorSpace, repeat = 1) {
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.repeat.set(repeat, repeat);
+      t.anisotropy = rendererMaxAniso();
+      t.colorSpace = colorSpace;
+      t.generateMipmaps = true;
+      t.minFilter = THREE.LinearMipmapLinearFilter;
+      t.magFilter = THREE.LinearFilter;
+      t.needsUpdate = true;
+      return t;
+    }
+    function pbrRough(base, mapMean = 0.4) {
+      if (!pbr.ready) return base;
+      return THREE.MathUtils.clamp(base / mapMean, 0.38, 1);
+    }
+    function ensureVec2(mat, key, x, y) {
+      if (!mat[key]) mat[key] = new THREE.Vector2();
+      mat[key].set(x, y);
+    }
+    function bindPaintMaps(mat, { nScale = 0.09, ccScale = 0.045, useRough = true } = {}) {
+      if (!pbr.paintN) return;
+      mat.roughnessMap = useRough ? pbr.paintRough : null;
+      mat.normalMap = pbr.paintN;
+      ensureVec2(mat, 'normalScale', nScale, nScale);
+      mat.clearcoatNormalMap = pbr.paintN;
+      ensureVec2(mat, 'clearcoatNormalScale', ccScale, ccScale);
+    }
+    function bindFabricMaps(mat, leather) {
+      if (!pbr.fabricN) return;
+      if (leather && pbr.leatherN) {
+        mat.normalMap = pbr.leatherN;
+        mat.roughnessMap = pbr.leatherRough || null;
+        mat.aoMap = pbr.leatherRough || null;
+        ensureVec2(mat, 'normalScale', 0.48, 0.48);
+        mat.aoMapIntensity = 0.22;
+      } else {
+        mat.normalMap = pbr.fabricN;
+        mat.roughnessMap = pbr.fabricRough || null;
+        mat.aoMap = pbr.fabricAo || pbr.fabricRough || null;
+        ensureVec2(mat, 'normalScale', 0.62, 0.62);
+        mat.aoMapIntensity = 0.38;
+      }
+    }
     function buildTextures() {
       tex.peel = canvasTex(512, (ctx, s) => {
         ctx.fillStyle = '#8080ff'; ctx.fillRect(0, 0, s, s);
@@ -1176,20 +1255,64 @@
     controls.autoRotateSpeed = 0.28;
     controls.enablePan = !mobile;
 
+    let yacht;
+    let bbox = new THREE.Box3();
+    const yachtRest = new THREE.Vector3();
+
     function composeView() {
       const w = innerWidth;
       const h = innerHeight;
       camera.aspect = w / h;
-      if (w <= 900) {
-        camera.clearViewOffset();
-      } else {
-        const panel = document.getElementById('panel');
-        const occluded = panel ? Math.min(panel.getBoundingClientRect().right + 24, w * 0.48) : 300;
-        // Shift optical center into the open stage so the yacht sits clear of the left panel
-        camera.setViewOffset(w, h, -Math.round(occluded * 0.88), 0, w, h);
-      }
-      camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+      const interior = state.view === 'salon' || state.view === 'galley' || state.view === 'cabin' || state.view === 'master' || state.view === 'bridge';
+      if (w <= 900 || interior || !yacht || !bbox || bbox.isEmpty()) {
+        camera.clearViewOffset();
+        camera.updateProjectionMatrix();
+        return;
+      }
+      const panel = document.getElementById('panel');
+      const frame = document.querySelector('.frame');
+      const leftEdge = panel ? panel.getBoundingClientRect().right : 274;
+      const rightEdge = frame ? frame.getBoundingClientRect().right : w - 10;
+      if (state.view === 'hero') {
+        fitProfileStage(leftEdge, rightEdge, w, h);
+        return;
+      }
+      const occluded = Math.min(leftEdge + 24, w * 0.48);
+      camera.setViewOffset(w, h, -Math.round(occluded * 0.88), 0, w, h);
+      camera.updateProjectionMatrix();
+    }
+    function fitProfileStage(leftEdge, rightEdge, w, h) {
+      const L = leftEdge + 6;
+      const R = rightEdge - 6;
+      const y = 1.18;
+      const zBow = bbox.min.z;
+      const zStern = bbox.max.z;
+      const pose = viewPose('hero');
+      camera.fov = pose.fov;
+      camera.clearViewOffset();
+      camera.updateProjectionMatrix();
+      const projectX = z => {
+        const v = new THREE.Vector3(0, y, z).project(camera);
+        return (v.x * 0.5 + 0.5) * w;
+      };
+      let bowX = projectX(zBow);
+      let sternX = projectX(zStern);
+      const curW = Math.max(8, Math.abs(bowX - sternX));
+      const wantW = Math.max(8, R - L);
+      camera.fov = THREE.MathUtils.clamp(pose.fov * (curW / wantW), 16, 42);
+      camera.updateProjectionMatrix();
+      let offsetX = 0;
+      camera.setViewOffset(w, h, 0, 0, w, h);
+      for (let i = 0; i < 8; i++) {
+        camera.view.offsetX = offsetX;
+        camera.updateProjectionMatrix();
+        bowX = projectX(zBow);
+        sternX = projectX(zStern);
+        offsetX -= (L - Math.min(bowX, sternX));
+      }
+      camera.view.offsetX = offsetX;
+      camera.updateProjectionMatrix();
     }
     composeView();
     const sky = new Sky();
@@ -1227,7 +1350,6 @@
     let envRT = null;
     let water;
     let deep;
-    let yachtRestY = 0;
 
     function setLighting(id = 'noon') {
       const L = find(LIGHTS, 'noon') || LIGHTS[0];
@@ -1265,8 +1387,8 @@
         if (u.sunDirection) u.sunDirection.value.copy(sun).normalize();
         if (u.waterColor) u.waterColor.value.setHex(0x0a5568);
         if (u.sunColor) u.sunColor.value.setHex(0xffffff);
-        if (u.distortionScale) u.distortionScale.value = 1.7;
-        if (u.size) u.size.value = 2.6;
+        if (u.distortionScale) u.distortionScale.value = 1.55;
+        if (u.size) u.size.value = 2.2;
         if (u.alpha) u.alpha.value = 1;
       }
       try {
@@ -1356,7 +1478,7 @@
         sunDirection: sun.clone().normalize(),
         sunColor: 0xffffff,
         waterColor: 0x0a5568,
-        distortionScale: 1.7,
+        distortionScale: 1.55,
         fog: false,
         alpha: 1,
         clipBias: 0.0004
@@ -1364,7 +1486,7 @@
       water.rotation.x = -Math.PI / 2;
       water.position.y = 0;
       water.receiveShadow = false;
-      if (water.material?.uniforms?.size) water.material.uniforms.size.value = 2.6;
+      if (water.material?.uniforms?.size) water.material.uniforms.size.value = 2.2;
       // Clamp close-range distortion (Water.js uses 1/distance → muddy hull reflections)
       if (water.material?.fragmentShader) {
         let fs = water.material.fragmentShader;
@@ -1421,16 +1543,16 @@
     const shared = {};
 
     function paintMat(opt) {
-      // Solid gelcoat — tiled AO/roughness/peel maps stripe on large hull & super panels
       const flake = opt.flake ?? 0.2;
       const isLight = (() => {
         const c = new THREE.Color(opt.hex);
         return c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722 > 0.55;
       })();
-      return new THREE.MeshPhysicalMaterial({
+      const baseRough = (opt.rough ?? 0.4) + (isLight ? 0.04 : 0.08);
+      const mat = new THREE.MeshPhysicalMaterial({
         color: opt.hex,
         metalness: THREE.MathUtils.clamp(flake * 0.28, 0.02, 0.22),
-        roughness: (opt.rough ?? 0.4) + (isLight ? 0.04 : 0.08),
+        roughness: pbrRough(baseRough, 0.38),
         clearcoat: isLight ? 0.78 : 0.88,
         clearcoatRoughness: isLight ? 0.14 : 0.1,
         envMapIntensity: isLight ? 0.7 : 0.85,
@@ -1441,21 +1563,22 @@
         specularIntensity: 0.75,
         specularColor: isLight ? 0xffffff : 0xfff5f0
       });
+      bindPaintMaps(mat, { nScale: isLight ? 0.1 : 0.14, ccScale: isLight ? 0.05 : 0.07 });
+      return mat;
     }
     function applyPaint(mat, opt) {
       if (!mat) return paintMat(opt);
       const flake = opt.flake ?? 0.2;
       const c = new THREE.Color(opt.hex);
       const isLight = c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722 > 0.55;
+      const baseRough = (opt.rough ?? 0.4) + (isLight ? 0.04 : 0.08);
       mat.color.set(opt.hex);
       mat.metalness = THREE.MathUtils.clamp(flake * 0.28, 0.02, 0.22);
-      mat.roughness = (opt.rough ?? 0.4) + (isLight ? 0.04 : 0.08);
+      mat.roughness = pbrRough(baseRough, 0.38);
       mat.map = null;
-      mat.roughnessMap = null;
       mat.aoMap = null;
       mat.aoMapIntensity = 0;
-      mat.normalMap = null;
-      mat.clearcoatNormalMap = null;
+      bindPaintMaps(mat, { nScale: isLight ? 0.1 : 0.14, ccScale: isLight ? 0.05 : 0.07 });
       mat.clearcoat = isLight ? 0.78 : 0.88;
       mat.clearcoatRoughness = isLight ? 0.14 : 0.1;
       mat.envMapIntensity = isLight ? 0.7 : 0.85;
@@ -1469,26 +1592,28 @@
     function fabricMat(opt) {
       const isLeather = opt.pattern === 'leather' || /leather|claret/i.test(opt.name || opt.id || '');
       const tint = new THREE.Color(opt.hex).lerp(new THREE.Color('#f3eee6'), isLeather ? 0.08 : 0.28);
-      return new THREE.MeshPhysicalMaterial({
+      const mat = new THREE.MeshPhysicalMaterial({
         color: tint,
         map: isLeather ? tex.leather : tex.fabricFor(opt.pattern || 'stripe'),
         metalness: 0,
-        roughness: isLeather ? Math.min(opt.rough, 0.42) : Math.max(opt.rough, 0.55),
-        sheen: opt.sheen,
+        roughness: pbrRough(isLeather ? Math.min(opt.rough, 0.42) : Math.max(opt.rough ?? 0.7, 0.68), isLeather ? 0.48 : 0.62),
+        sheen: isLeather ? opt.sheen : Math.min(opt.sheen || 0, 0.18),
         sheenColor: opt.hex,
-        sheenRoughness: isLeather ? 0.35 : 0.55,
-        clearcoat: isLeather ? 0.22 : 0.02,
-        clearcoatRoughness: isLeather ? 0.45 : 0.7,
-        envMapIntensity: isLeather ? 0.65 : 0.4,
-        specularIntensity: isLeather ? 0.55 : 0.25
+        sheenRoughness: isLeather ? 0.35 : 0.78,
+        clearcoat: isLeather ? 0.22 : 0,
+        clearcoatRoughness: isLeather ? 0.45 : 1,
+        envMapIntensity: isLeather ? 0.72 : 0.38,
+        specularIntensity: isLeather ? 0.55 : 0.12
       });
+      bindFabricMaps(mat, isLeather);
+      return mat;
     }
     function roofMat(opt) {
-      return new THREE.MeshPhysicalMaterial({
+      const mat = new THREE.MeshPhysicalMaterial({
         color: opt.hex,
-        map: null,
+        map: opt.carbon ? tex.carbon : null,
         metalness: opt.carbon ? (opt.metal || 0.35) : 0,
-        roughness: opt.rough ?? (opt.carbon ? 0.38 : 0.78),
+        roughness: pbrRough(opt.rough ?? (opt.carbon ? 0.38 : 0.78), opt.carbon ? 0.32 : 0.62),
         sheen: opt.carbon ? 0 : (opt.sheen || 0.4),
         sheenColor: opt.hex,
         sheenRoughness: 0.6,
@@ -1497,6 +1622,20 @@
         envMapIntensity: opt.carbon ? 1.05 : 0.4,
         specularIntensity: opt.carbon ? 0.75 : 0.22
       });
+      if (opt.carbon && pbr.metalN) {
+        mat.normalMap = pbr.metalN;
+        mat.roughnessMap = pbr.metalRough;
+        ensureVec2(mat, 'normalScale', 0.18, 0.18);
+        mat.clearcoatNormalMap = null;
+      } else if (pbr.fabricN) {
+        mat.normalMap = pbr.fabricN;
+        mat.roughnessMap = pbr.fabricRough;
+        mat.aoMap = pbr.fabricAo || null;
+        mat.aoMapIntensity = 0.22;
+        ensureVec2(mat, 'normalScale', 0.32, 0.32);
+        mat.clearcoatNormalMap = null;
+      }
+      return mat;
     }
     function disposeWoodSuite(suite) {
       if (!suite) return;
@@ -1505,13 +1644,24 @@
       suite.normalMap?.dispose();
       suite.aoMap?.dispose();
     }
+    function woodPoreNormal() {
+      if (!pbr.leatherN) return null;
+      if (!pbr.woodPoreN) {
+        pbr.woodPoreN = pbr.leatherN.clone();
+        pbr.woodPoreN.wrapS = pbr.woodPoreN.wrapT = THREE.RepeatWrapping;
+        pbr.woodPoreN.repeat.set(2.8, 2.8);
+        pbr.woodPoreN.anisotropy = rendererMaxAniso();
+        pbr.woodPoreN.needsUpdate = true;
+      }
+      return pbr.woodPoreN;
+    }
     function woodMat(opt) {
       const suite = tex.wood(opt.a, opt.b);
-      return new THREE.MeshPhysicalMaterial({
+      const mat = new THREE.MeshPhysicalMaterial({
         map: suite.map,
         roughnessMap: suite.roughnessMap,
         normalMap: suite.normalMap,
-        normalScale: new THREE.Vector2(0.18, 0.18),
+        normalScale: new THREE.Vector2(0.22, 0.22),
         color: 0xffffff,
         metalness: 0,
         roughness: 0.45,
@@ -1523,33 +1673,52 @@
         sheenColor: new THREE.Color(opt.a),
         sheenRoughness: 0.65
       });
+      const pores = woodPoreNormal();
+      if (pores) {
+        mat.clearcoatNormalMap = pores;
+        ensureVec2(mat, 'clearcoatNormalScale', 0.11, 0.11);
+      }
+      return mat;
     }
     function deckMat(opt) {
-      return new THREE.MeshPhysicalMaterial({
+      const mat = new THREE.MeshPhysicalMaterial({
         map: tex.deck(opt.a, opt.b),
         metalness: 0,
-        roughness: 0.58,
+        roughness: pbrRough(0.58, 0.4),
         clearcoat: 0.12,
         clearcoatRoughness: 0.55,
         envMapIntensity: 0.55,
         specularIntensity: 0.35
       });
+      bindPaintMaps(mat, { nScale: 0.14, ccScale: 0.04, useRough: true });
+      return mat;
     }
     function metalMat(opt) {
-      return new THREE.MeshPhysicalMaterial({
-        color: opt.hex, metalness: opt.metal, roughness: opt.rough, map: tex.metal,
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: opt.hex, metalness: opt.metal, roughness: pbrRough(opt.rough, 0.3), map: tex.metal,
         anisotropy: 0,
         envMapIntensity: 1.85, clearcoat: 0.25, clearcoatRoughness: 0.08
       });
+      if (pbr.metalN) {
+        mat.normalMap = pbr.metalN;
+        mat.roughnessMap = pbr.metalRough;
+        ensureVec2(mat, 'normalScale', 0.26, 0.26);
+      }
+      return mat;
     }
     function ropeMat(opt) {
-      return new THREE.MeshStandardMaterial({
+      const mat = new THREE.MeshStandardMaterial({
         color: opt.hex,
         map: tex.rope,
         metalness: 0,
         roughness: opt.id === 'black' ? 0.72 : 0.82,
         envMapIntensity: 0.35
       });
+      if (pbr.ropeN) {
+        mat.normalMap = pbr.ropeN;
+        ensureVec2(mat, 'normalScale', 0.38, 0.38);
+      }
+      return mat;
     }
     function rebuildShared() {
       shared.hull = applyPaint(shared.hull, find(HULLS, state.hull));
@@ -1572,23 +1741,39 @@
         shared.anti.polygonOffsetUnits = 1;
         shared.anti.needsUpdate = true;
       }
+      bindPaintMaps(shared.anti, { nScale: 0.07, ccScale: 0.02, useRough: false });
+
       shared.super = applyPaint(shared.super, find(SUPERS, state.super));
 
       const roof = find(ROOFS, state.roof);
       if (!shared.roof) shared.roof = roofMat(roof);
       else {
         shared.roof.color.set(roof.hex);
-        shared.roof.map = null;
+        shared.roof.map = roof.carbon ? tex.carbon : null;
         shared.roof.aoMap = null;
-        shared.roof.roughnessMap = null;
         shared.roof.aoMapIntensity = 0;
         shared.roof.metalness = roof.carbon ? (roof.metal || 0.35) : 0;
-        shared.roof.roughness = roof.rough ?? (roof.carbon ? 0.35 : 0.72);
+        shared.roof.roughness = pbrRough(roof.rough ?? (roof.carbon ? 0.35 : 0.72), roof.carbon ? 0.32 : 0.62);
         shared.roof.sheen = roof.carbon ? 0 : (roof.sheen || 0.45);
         shared.roof.sheenColor.set(roof.hex);
         shared.roof.clearcoat = roof.carbon ? 0.55 : 0.06;
         shared.roof.clearcoatRoughness = roof.carbon ? 0.22 : 0.65;
         shared.roof.envMapIntensity = roof.carbon ? 1.25 : 0.5;
+        if (roof.carbon && pbr.metalN) {
+          shared.roof.normalMap = pbr.metalN;
+          shared.roof.roughnessMap = pbr.metalRough;
+          shared.roof.aoMap = null;
+          shared.roof.aoMapIntensity = 0;
+          ensureVec2(shared.roof, 'normalScale', 0.18, 0.18);
+          shared.roof.clearcoatNormalMap = null;
+        } else if (pbr.fabricN) {
+          shared.roof.normalMap = pbr.fabricN;
+          shared.roof.roughnessMap = pbr.fabricRough;
+          shared.roof.aoMap = pbr.fabricAo || null;
+          shared.roof.aoMapIntensity = 0.22;
+          ensureVec2(shared.roof, 'normalScale', 0.32, 0.32);
+          shared.roof.clearcoatNormalMap = null;
+        }
         shared.roof.needsUpdate = true;
       }
 
@@ -1599,13 +1784,12 @@
       else {
         shared.textile.color.copy(textileTint);
         shared.textile.map = isLeather ? tex.leather : tex.fabricFor(textile.pattern || 'stripe');
-        shared.textile.aoMap = null;
-        shared.textile.roughnessMap = null;
-        shared.textile.aoMapIntensity = 0;
-        shared.textile.roughness = isLeather ? Math.min(textile.rough, 0.38) : textile.rough;
-        shared.textile.sheen = textile.sheen;
+        shared.textile.roughness = pbrRough(isLeather ? Math.min(textile.rough, 0.38) : Math.max(textile.rough ?? 0.7, 0.68), isLeather ? 0.48 : 0.62);
+        shared.textile.sheen = isLeather ? textile.sheen : Math.min(textile.sheen || 0, 0.18);
         shared.textile.sheenColor.set(textile.hex);
-        shared.textile.clearcoat = isLeather ? 0.35 : 0.05;
+        shared.textile.clearcoat = isLeather ? 0.22 : 0;
+        shared.textile.envMapIntensity = isLeather ? 0.72 : 0.38;
+        bindFabricMaps(shared.textile, isLeather);
         shared.textile.needsUpdate = true;
       }
 
@@ -1630,7 +1814,12 @@
       else {
         shared.metal.color.set(metal.hex);
         shared.metal.metalness = metal.metal;
-        shared.metal.roughness = metal.rough;
+        shared.metal.roughness = pbrRough(metal.rough, 0.3);
+        if (pbr.metalN) {
+          shared.metal.normalMap = pbr.metalN;
+          shared.metal.roughnessMap = pbr.metalRough;
+          ensureVec2(shared.metal, 'normalScale', 0.26, 0.26);
+        }
         shared.metal.needsUpdate = true;
       }
 
@@ -1638,7 +1827,12 @@
       if (!shared.rope) shared.rope = ropeMat(rope);
       else {
         shared.rope.color.set(rope.hex);
+        shared.rope.map = tex.rope;
         shared.rope.roughness = rope.id === 'black' ? 0.72 : 0.82;
+        if (pbr.ropeN) {
+          shared.rope.normalMap = pbr.ropeN;
+          ensureVec2(shared.rope, 'normalScale', 0.38, 0.38);
+        }
         shared.rope.needsUpdate = true;
       }
 
@@ -1688,71 +1882,56 @@
       if (m.includes('Hull_anitfouling')) return 'anti';
       if (m.includes('Hull_5004')) return 'hull';
       if (m.includes('Tent_') || /Cockpit_roof/i.test(o)) return 'roof';
-      if (m.startsWith('Stof_') || /curtain|Cockpit_sofa|Sofa$/i.test(o) || /^Sofa0/i.test(o)) return 'textile';
+      if (m.includes('Wood_') || /sofa_wood|Sofa_wood/i.test(o)) return 'wood';
+      if (m.startsWith('Stof_') || /curtain|Cockpit_sofa|pillow|cushion|stof/i.test(o) || (/^(Sofa|Chair|chair)/i.test(o) && !/wood/i.test(o))) return 'textile';
       if (m.includes('Construction_9001') || m.includes('Construction_9003')) return 'super';
-      if (m.includes('Wood_') || /_sofa_wood|Sofa_wood/i.test(o)) return 'wood';
       if (m.includes('Deck_floor') || m.includes('Parquet')) return 'deck';
       if (m.includes('Stainless') || m.includes('aluminium')) return 'metal';
       if (/rope|Rope_naturaal|black_rope|Yacht_rope/i.test(m + o)) return 'rope';
       if (m.includes('glass')) return 'glass';
       if (m.includes('Material_light')) return 'light';
       if (m.includes('blauw')) return 'trim';
-      if (/Bathroom|Bedroom|Kitchen|Living_Room|Living_room|Sink|Stairs|Cup|Tv|Microwave|Induction|coffee|Clock|Lampe|wardrobe|Seat|Stand|Plateau|wall|floor|roof1|object|switch|Door|Sofa_wood/i.test(o) && !m.includes('Hull')) {
+      if (/Bathroom|Bedroom|Kitchen|Living_Room|Living_room|Sink|Stairs|Cup|Tv|Microwave|Induction|coffee|Clock|Lampe|wardrobe|Stand|Plateau|wall|floor|roof1|object|switch|Door|Sofa_wood/i.test(o) && !m.includes('Hull') && !/chair|Chair|pillow|cushion/i.test(o)) {
         return 'interior';
       }
       if (/apple|pear|orange|peach|Leaf|vase|pages|ferrari|Book/i.test(m + o)) return 'prop';
       return 'other';
     }
 
-    function interiorMaterial(name = '') {
-      const n = name;
-      if (/Sofa_wood|wood|Door|box|wardrobe|object|cabinet/i.test(n)) {
-        if (!tex._intWood) tex._intWood = tex.wood('#6b4228', '#24140c');
-        const suite = tex._intWood;
-        return new THREE.MeshPhysicalMaterial({
-          map: suite.map,
-          roughnessMap: suite.roughnessMap,
-          normalMap: suite.normalMap,
-          normalScale: new THREE.Vector2(0.2, 0.2),
-          metalness: 0,
-          roughness: 0.48,
-          clearcoat: 0.45,
-          clearcoatRoughness: 0.28,
-          envMapIntensity: 0.7
-        });
-      }
-      if (/Tv|Microwave|Induction|coffee|screen|switch|metal/i.test(n)) {
-        return new THREE.MeshPhysicalMaterial({
-          color: 0x2a2e34, metalness: 0.72, roughness: 0.38,
-          map: tex.metal,
-          envMapIntensity: 0.95, clearcoat: 0.15, clearcoatRoughness: 0.25
-        });
-      }
-      if (/Sink|Seat|Cup|Plateau|Stand|ceramic|table/i.test(n)) {
-        return new THREE.MeshPhysicalMaterial({
-          color: 0xf0ebe4, metalness: 0.04, roughness: 0.32,
-          clearcoat: 0.55, clearcoatRoughness: 0.22, envMapIntensity: 0.7
-        });
-      }
-      if (/Clock|Lampe|lamp|curtain/i.test(n)) {
-        return new THREE.MeshPhysicalMaterial({
-          color: 0xd9cfc0, map: tex.fabric, metalness: 0, roughness: 0.58,
-          sheen: 0.4, sheenColor: 0xe8dfd0, envMapIntensity: 0.35
-        });
-      }
-      if (/floor|Stairs|Parquet|Deck/i.test(n)) {
-        return new THREE.MeshPhysicalMaterial({
-          map: tex.deck('#c9a574', '#8a6840'),
-          metalness: 0.02, roughness: 0.55,
-          clearcoat: 0.18, clearcoatRoughness: 0.5, envMapIntensity: 0.55
-        });
-      }
-      return new THREE.MeshPhysicalMaterial({
-        color: 0xf2ebe2, map: tex.wall, metalness: 0.02, roughness: 0.62,
-        normalMap: tex.plasterN, normalScale: new THREE.Vector2(0.18, 0.18),
-        envMapIntensity: 0.4
+    function refreshPbrDependents() {
+      if (!groups.hull.length && !groups.textile.length) return;
+      try { rebuildShared(); } catch (e) { window.__dbg.pbrErr = String(e && e.stack || e); }
+    }
+
+    function loadLibraryPbr() {
+      const loader = new THREE.TextureLoader();
+      const jobs = [
+        ['paintRough', './assets/pbr/paint-rough.jpg', THREE.NoColorSpace, 1],
+        ['paintN', './assets/pbr/paint-n.jpg', THREE.NoColorSpace, 1],
+        ['metalRough', './assets/pbr/metal-rough.jpg', THREE.NoColorSpace, 1],
+        ['metalN', './assets/pbr/metal-n.jpg', THREE.NoColorSpace, 1],
+        ['fabricRough', './assets/pbr/fabric-rough.jpg', THREE.NoColorSpace, 1],
+        ['fabricN', './assets/pbr/fabric-n.jpg', THREE.NoColorSpace, 1],
+        ['fabricAo', './assets/pbr/fabric-ao.jpg', THREE.NoColorSpace, 1],
+        ['leatherRough', './assets/pbr/leather-rough.jpg', THREE.NoColorSpace, 1],
+        ['leatherN', './assets/pbr/leather-n.jpg', THREE.NoColorSpace, 1],
+        ['ropeN', './assets/pbr/rope-n.jpg', THREE.NoColorSpace, 2.4]
+      ];
+      let left = jobs.length;
+      const done = () => {
+        if (--left > 0) return;
+        pbr.ready = !!(pbr.paintN && pbr.fabricN);
+        window.__dbg.pbr = { ready: pbr.ready, keys: Object.keys(pbr).filter(k => pbr[k] && k !== 'ready') };
+        refreshPbrDependents();
+      };
+      jobs.forEach(([key, url, cs, rep]) => {
+        loader.load(url, t => {
+          pbr[key] = prepPbrTex(t, cs, rep);
+          done();
+        }, undefined, done);
       });
     }
+    loadLibraryPbr();
 
     function patchAntiBootstripe(mat, topY, band = 0.022) {
       const bootWhite = new THREE.Color(0xf7f5f0);
@@ -1788,9 +1967,14 @@
       groups.anti.forEach(m => { m.material = shared.anti; });
     }
 
-    let yacht = new THREE.Group();
-    let bbox = new THREE.Box3();
+    yacht = new THREE.Group();
+    bbox = new THREE.Box3();
     const clock = new THREE.Clock();
+    const keys = Object.create(null);
+    const _walkFwd = new THREE.Vector3();
+    const _walkRight = new THREE.Vector3();
+    const _walkUp = new THREE.Vector3(0, 1, 0);
+    const _walkDelta = new THREE.Vector3();
 
     const barEl = document.getElementById('bar');
     const pctEl = document.getElementById('pct');
@@ -1809,10 +1993,9 @@
     function mb(n) { return `${(n / 1048576).toFixed(1)} MB`; }
 
     function mountYacht(root) {
-      setProgress(0.92, 'Preparing surfaces…', 'Assigning paint, textiles and glass');
+      setProgress(0.92, 'Dressing the surfaces…', 'Paint, textiles and glass');
       yacht = new THREE.Group();
       yacht.add(root);
-      const flagMeshes = [];
       yacht.traverse(child => {
         if (!child.isMesh) return;
         child.frustumCulled = false;
@@ -1824,72 +2007,13 @@
         const matName = Array.isArray(child.material) ? child.material[0]?.name || '' : child.material?.name || '';
         const cat = classify(matName, child.name || child.parent?.name || '');
         child.userData.category = cat;
-        // Rebuild UVs — GLB unwraps are stretched on cushions, decks, joinery
-        if (child.geometry && cat !== 'flag' && cat !== 'glass') {
-          const uv = uvModeFor(cat, child.name || '');
-          reprojectUVs(child.geometry, uv.mode, uv.scale);
-        }
         child.castShadow = cat !== 'glass' && cat !== 'flag';
         // Large gelcoat panels self-shadow → stripe acne; they cast but don't receive
         child.receiveShadow = !(cat === 'hull' || cat === 'super' || cat === 'roof' || cat === 'anti' || cat === 'trim');
-        if (groups[cat] && cat !== 'interior' && cat !== 'flag') groups[cat].push(child);
+        if (groups[cat]) groups[cat].push(child);
         if (mobile && cat === 'prop') child.visible = false;
-        // Keep authored Dutch flag materials from the GLB (do not replace with flat props)
-        if (cat === 'flag') {
-          flagMeshes.push(child);
-          return;
-        }
-        if (cat === 'other' || cat === 'prop') {
-          const n = (child.name || '') + (child.parent?.name || '');
-          let color = 0xc4b8a8;
-          if (/apple|pear|peach|orange/i.test(n)) color = /orange|peach/i.test(n) ? 0xe07030 : 0xb8c85a;
-          else if (/Leaf/i.test(n)) color = 0x3f6b3a;
-          else if (/vase/i.test(n)) color = 0xd2c6b4;
-          else if (/Book|pages|ferrari/i.test(n)) color = 0x7a3038;
-          else if (/roof1|Cockpit_door|Cockpit_screen|wiper/i.test(n)) {
-            child.material = interiorMaterial(n);
-            return;
-          }
-          child.material = new THREE.MeshStandardMaterial({
-            color, metalness: 0.06, roughness: 0.45, envMapIntensity: 0.65
-          });
-        } else if (cat === 'interior') {
-          child.material = interiorMaterial(child.name || '');
-        }
       });
       yacht.updateMatrixWorld(true);
-      // Dutch order top→bottom: red, white, blue (by stripe height in world space)
-      if (flagMeshes.length) {
-        const dutch = [0xae1c28, 0xffffff, 0x21468b];
-        flagMeshes.sort((a, b) => {
-          a.updateWorldMatrix(true, false);
-          b.updateWorldMatrix(true, false);
-          a.geometry.computeBoundingBox();
-          b.geometry.computeBoundingBox();
-          const ca = a.geometry.boundingBox.getCenter(new THREE.Vector3()).applyMatrix4(a.matrixWorld);
-          const cb = b.geometry.boundingBox.getCenter(new THREE.Vector3()).applyMatrix4(b.matrixWorld);
-          return cb.y - ca.y;
-        });
-        flagMeshes.forEach((mesh, i) => {
-          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          mats.forEach(mat => {
-            if (!mat) return;
-            mat.map = null;
-            mat.color.setHex(dutch[Math.min(i, dutch.length - 1)]);
-            mat.side = THREE.DoubleSide;
-            mat.metalness = 0;
-            mat.roughness = 0.55;
-            mat.emissive = new THREE.Color(mat.color).multiplyScalar(0.12);
-            if ('emissiveIntensity' in mat) mat.emissiveIntensity = 0.35;
-            if ('envMapIntensity' in mat) mat.envMapIntensity = 0.35;
-            mat.depthWrite = true;
-            mat.polygonOffset = true;
-            mat.polygonOffsetFactor = -1;
-            mat.polygonOffsetUnits = -1;
-            mat.needsUpdate = true;
-          });
-        });
-      }
       scene.add(yacht);
       yacht.updateMatrixWorld(true);
       bbox.setFromObject(yacht);
@@ -1898,7 +2022,13 @@
       yacht.position.z -= c.z;
       yacht.updateMatrixWorld(true);
       bbox.setFromObject(yacht);
-      yacht.position.y -= bbox.min.y + 0.92;
+      // Sit on the designed waterline (top of antifouling), with a few cm immersed
+      let cut = bbox.min.y + 0.92;
+      if (groups.anti[0]) {
+        const antiBox = new THREE.Box3().setFromObject(groups.anti[0]);
+        cut = antiBox.max.y - 0.055;
+      }
+      yacht.position.y -= cut;
       yacht.updateMatrixWorld(true);
       bbox.setFromObject(yacht);
       // Hand-picked room anchors (not largest mesh — that was pulling cameras off-room)
@@ -1954,11 +2084,11 @@
       }
       // Keep antifouling coplanar; polygonOffset + bootstripe shader handle the seam
       if (water) water.position.y = 0;
-      yachtRestY = yacht.position.y;
+      yachtRest.copy(yacht.position);
       flyTo('hero', true);
       composeView();
-      window.__three = { scene, camera, renderer, yacht, water, sky, controls, shared };
-      setProgress(1, 'Ready', '');
+      window.__three = { scene, camera, renderer, yacht, water, sky, controls, shared, pbr };
+      setProgress(1, 'Ready', 'WASD to walk the decks');
       document.getElementById('loader').classList.add('hide');
       document.body.classList.add('ready');
       setTimeout(() => document.getElementById('loader')?.remove(), 900);
@@ -1966,12 +2096,12 @@
 
     function onDownloadProgress(xhr) {
       if (!xhr.total) {
-        setProgress(0.12, 'Loading the yacht…', mb(xhr.loaded) + ' received');
+        setProgress(0.12, 'Receiving the yacht…', mb(xhr.loaded) + ' of the hull');
         return;
       }
       const p = xhr.loaded / xhr.total;
-      setProgress(p * 0.86, 'Loading the yacht…', `${mb(xhr.loaded)} / ${mb(xhr.total)}`);
-      if (p >= 0.99) setProgress(0.88, 'Decoding meshes…', 'Draco decompression', true);
+      setProgress(p * 0.86, 'Receiving the yacht…', `${mb(xhr.loaded)} / ${mb(xhr.total)}`);
+      if (p >= 0.99) setProgress(0.88, 'Unfolding the interior…', 'Draco decompression', true);
     }
 
     const dracoLoader = new DRACOLoader();
@@ -2006,8 +2136,8 @@
         aerial: { p: [3.2, 14.5, 1.2], t: [0, 0.2, 0], fov: 42 },
         // BRIDGE — left of pilot chair, wheel on the right, looking out the glass
         bridge: { p: [-0.22, 2.78, 4.25], t: [0.35, 2.52, 1.45], fov: 50 },
-        // GALLEY — from the companionway toward the cooktop / sink corner
-        galley: { p: [0.55, 1.48, -1.2], t: [-0.25, 1.18, -3.2], fov: 52 },
+        // GALLEY — aisle at the hob, sink and cabin door in frame
+        galley: { p: [0.05, 1.46, -1.72], t: [1.05, 0.94, -2.70], fov: 48 },
         // SALON — aisle, slight starboard look to clear the center pillar
         salon: { p: [-0.28, 1.62, 2.05], t: [0.45, 1.32, -1.05], fov: 48 },
         // CABIN (Bedroom_2) — just inside the doorway, clear view of the berth
@@ -2054,6 +2184,7 @@
       controls.enablePan = inside ? true : !mobile;
       controls.autoRotate = false;
       renderViews();
+      composeView();
     }
     const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
@@ -2158,6 +2289,9 @@
       const b = e.target.closest('[data-view]'); if (!b) return;
       controls.autoRotate = false; flyTo(b.dataset.view);
     });
+    document.getElementById('hint')?.addEventListener('click', () => {
+      document.getElementById('hint').classList.add('hidden');
+    });
     document.getElementById('body').addEventListener('click', e => {
       const pkg = e.target.closest('[data-pkg]');
       if (pkg) { applyPackage(pkg.dataset.pkg); rebuildShared(); renderBody(); return; }
@@ -2213,9 +2347,20 @@
     });
     addEventListener('keydown', e => {
       if (state.ordered) return;
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) return;
+      const code = e.code;
+      if (code === 'KeyW' || code === 'KeyA' || code === 'KeyS' || code === 'KeyD' || code === 'KeyQ' || code === 'KeyE' || code === 'ShiftLeft' || code === 'ShiftRight') {
+        keys[code] = true;
+        e.preventDefault();
+        camTween.t = 1;
+      }
       if (e.key === 'ArrowRight') goStep(state.step + 1);
       if (e.key === 'ArrowLeft') goStep(state.step - 1);
     });
+    addEventListener('keyup', e => {
+      keys[e.code] = false;
+    });
+    addEventListener('blur', () => { for (const k of Object.keys(keys)) keys[k] = false; });
     addEventListener('resize', composeView);
 
     const viewsNav = document.getElementById('views');
@@ -2256,34 +2401,83 @@
       }
     }
 
-    const _float = { heave: 0, roll: 0, pitch: 0 };
+    const _float = {
+      heave: 0, roll: 0, pitch: 0,
+      euler: new THREE.Euler(),
+      pivot: new THREE.Vector3()
+    };
 
-    /** Cheap swell: phase-locked to Water.time so the hull “rides” the same sea. */
-    function updateYachtFloat(dt) {
-      if (!yacht || reduced) return;
-      const wave = water?.material?.uniforms?.time?.value ?? clock.elapsedTime;
-      // Two-frequency heave + soft roll/pitch — no sim, ~zero cost
-      const heave =
-        Math.sin(wave * 0.52) * 0.055 +
-        Math.sin(wave * 0.91 + 1.15) * 0.022;
-      const roll =
-        Math.sin(wave * 0.41 + 0.4) * 0.014 +
-        Math.sin(wave * 0.19) * 0.005;
-      const pitch =
-        Math.sin(wave * 0.33 + 0.85) * 0.009 +
-        Math.sin(wave * 0.61 + 2.1) * 0.004;
+    function updateWalk(dt) {
+      if (!document.body.classList.contains('ready') || state.ordered) return;
+      const wishZ = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0);
+      const wishX = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0);
+      const wishY = (keys.KeyE ? 1 : 0) - (keys.KeyQ ? 1 : 0);
+      if (!wishZ && !wishX && !wishY) return;
       const v = find(VIEWS, state.view);
       const inside = v?.kind === 'int' || state.view === 'bridge';
-      const damp = inside ? 0.22 : 1;
-      // Smooth so flyTo / package changes don’t pop
-      const a = 1 - Math.exp(-dt * 4.5);
-      _float.heave += (heave * damp - _float.heave) * a;
-      _float.roll += ((inside ? 0 : roll) - _float.roll) * a;
-      _float.pitch += ((inside ? 0 : pitch) - _float.pitch) * a;
-      yacht.position.y = yachtRestY + _float.heave;
-      yacht.rotation.z = _float.roll;
-      yacht.rotation.x = _float.pitch;
-      // Keep interior cameras glued to the cabin so furniture doesn’t drift underfoot
+      const sprint = keys.ShiftLeft || keys.ShiftRight;
+      const speed = (inside ? 1.7 : 9.2) * (sprint ? 2.15 : 1);
+      camera.getWorldDirection(_walkFwd);
+      _walkFwd.y = 0;
+      if (_walkFwd.lengthSq() < 1e-6) _walkFwd.set(0, 0, -1);
+      _walkFwd.normalize();
+      _walkRight.crossVectors(_walkFwd, _walkUp).normalize();
+      _walkDelta.set(0, 0, 0);
+      _walkDelta.addScaledVector(_walkFwd, wishZ);
+      _walkDelta.addScaledVector(_walkRight, wishX);
+      _walkDelta.y += wishY;
+      if (_walkDelta.lengthSq() > 1e-6) _walkDelta.normalize().multiplyScalar(speed * dt);
+      camera.position.add(_walkDelta);
+      controls.target.add(_walkDelta);
+      if (inside) {
+        camera.position.y = THREE.MathUtils.clamp(camera.position.y, 0.52, 2.9);
+        controls.target.y = THREE.MathUtils.clamp(controls.target.y, 0.35, 2.7);
+      } else {
+        camera.position.y = Math.max(0.38, camera.position.y);
+        const span = bbox.isEmpty() ? 20 : Math.max(bbox.getSize(new THREE.Vector3()).x, bbox.getSize(new THREE.Vector3()).z);
+        const maxR = Math.max(48, span * 4.2);
+        const r = Math.hypot(camera.position.x, camera.position.z);
+        if (r > maxR) {
+          const s = maxR / r;
+          camera.position.x *= s;
+          camera.position.z *= s;
+        }
+      }
+    }
+
+    /** Harbour swell around the waterplane. A handful of sines — no physics. */
+    function updateYachtFloat(dt) {
+      if (!yacht) return;
+      const v = find(VIEWS, state.view);
+      const inside = v?.kind === 'int' || state.view === 'bridge';
+      let heave = 0, roll = 0, pitch = 0;
+      if (!reduced) {
+        const t = clock.elapsedTime;
+        // ~11 s lazy heave, quieter second harmonic so it isn’t a metronome
+        heave =
+          Math.sin(t * 0.547) * 0.068 +
+          Math.sin(t * 0.805 + 1.25) * 0.016;
+        roll = Math.sin(t * 0.476 + 0.55) * 0.0072;
+        pitch = Math.sin(t * 0.668 + 1.05) * 0.0036;
+        if (inside) {
+          heave *= 0.16;
+          roll = 0;
+          pitch = 0;
+        }
+      }
+      const a = 1 - Math.exp(-dt * 2.6);
+      _float.heave += (heave - _float.heave) * a;
+      _float.roll += (roll - _float.roll) * a;
+      _float.pitch += (pitch - _float.pitch) * a;
+      // Rock about the waterline, not the GLB origin (that reads as teetering)
+      _float.euler.set(_float.pitch, 0, _float.roll);
+      _float.pivot.set(0, -yachtRest.y, 0).applyEuler(_float.euler);
+      yacht.rotation.set(_float.pitch, 0, _float.roll);
+      yacht.position.set(
+        yachtRest.x - _float.pivot.x,
+        _float.heave - _float.pivot.y,
+        yachtRest.z - _float.pivot.z
+      );
       if (inside && camTween.t >= 1) {
         camera.position.y += _float.heave - (camera.userData._lastHeave || 0);
         controls.target.y += _float.heave - (camera.userData._lastHeave || 0);
@@ -2307,11 +2501,12 @@
           camera.updateProjectionMatrix();
           controls.update();
         } else {
+          updateWalk(dt);
           controls.autoRotate = false;
           controls.update();
         }
         if (water?.material?.uniforms?.time) {
-          water.material.uniforms.time.value += dt * 0.32;
+          water.material.uniforms.time.value += dt * 0.52;
         }
         updateYachtFloat(dt);
         renderer.setRenderTarget(null);

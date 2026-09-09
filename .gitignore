@@ -4,3 +4,4 @@ model.blend1
 node_modules/
 _preview*.png
 *.tgz
+assets/pbr/_extract/
