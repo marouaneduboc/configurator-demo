@@ -18,9 +18,9 @@
       --ink: #132033;
       --muted: rgba(19, 32, 51, 0.58);
       /* Single glass system — tweak here to restyle every frame/button */
-      --glass-bg: linear-gradient(165deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.05) 48%, rgba(255,255,255,.02) 100%);
-      --glass-fill: rgba(255,255,255,.08);
-      --glass-fill-on: rgba(255,255,255,.16);
+      --glass-bg: linear-gradient(165deg, rgba(255,255,255,.14) 0%, rgba(18,36,58,.16) 52%, rgba(10,22,38,.2) 100%);
+      --glass-fill: rgba(255,255,255,.07);
+      --glass-fill-on: rgba(255,255,255,.14);
       --glass-blur: blur(28px) saturate(1.4);
       --glass-border: 1px solid rgba(255,255,255,.38);
       --glass-inset: inset 0 1px 0 rgba(255,255,255,.42);
@@ -112,10 +112,10 @@
       border: 1px solid rgba(197,164,110,.7);
       display: grid; place-items: center;
       font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 12px;
-      color: var(--navy); letter-spacing: .08em;
+      letter-spacing: .08em;
     }
     .brand h1 { font-family: "Cormorant Garamond", serif; font-size: 19px; font-weight: 600; line-height: 1; letter-spacing: .06em; }
-    .brand p { font-size: 9px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+    .brand p { font-size: 9px; letter-spacing: .24em; text-transform: uppercase; margin-top: 3px; }
     nav.steps {
       grid-area: steps;
       display: inline-flex; align-items: center; justify-content: center; gap: 0;
@@ -126,21 +126,57 @@
     nav.steps::-webkit-scrollbar, nav.views::-webkit-scrollbar { display: none; }
     .step, .view {
       appearance: none; border: 0; background: transparent; cursor: pointer;
-      padding: 8px 10px; color: var(--muted); font-size: 10px; letter-spacing: .14em;
+      padding: 8px 10px; font-size: 10px; letter-spacing: .14em;
       text-transform: uppercase; white-space: nowrap; position: relative; flex-shrink: 0;
     }
-    .step.on, .view.on { color: var(--navy); font-weight: 600; }
     .step.on::after, .view.on::after {
       content: ""; position: absolute; left: 14px; right: 14px; bottom: 5px; height: 1px;
       background: var(--gold);
     }
+    /*
+      Adaptive type (same scheme as bottom POI bar):
+      default = light type over dark water/sky; .on-light = dark type over bright backdrop.
+      Accent hues (green / burgundy / gold / navy) are preserved, only luminance flips.
+    */
+    .brand, .price-pill, nav.steps, aside, nav.views {
+      --ui-ink: #ffffff;
+      --ui-muted: rgba(255, 255, 255, 0.68);
+      --ui-navy: #f4f7fb;
+      --ui-green: #8fc9a8;
+      --ui-burgundy: #e8a0a8;
+      --ui-shadow: 0 1px 3px rgba(0, 12, 24, 0.55);
+    }
+    .brand.on-light, .price-pill.on-light, nav.steps.on-light, aside.on-light, nav.views.on-light {
+      --ui-ink: var(--ink);
+      --ui-muted: var(--muted);
+      --ui-navy: var(--navy);
+      --ui-green: var(--green);
+      --ui-burgundy: var(--burgundy);
+      --ui-shadow: none;
+    }
+    .brand h1, .price-pill strong, .aside-head h2, .block h3, .card b, .spec .tot,
+    .step.on, .view.on, .swatch.on small, .ghost, .go {
+      color: var(--ui-ink);
+      text-shadow: var(--ui-shadow);
+    }
+    .step.on, .view.on { font-weight: 600; }
+    .brand p, .price-pill span, .aside-head p, .card span, .spec li span,
+    .step, .view, .swatch small {
+      color: var(--ui-muted);
+      text-shadow: var(--ui-shadow);
+    }
+    .aside-head .kicker { color: var(--ui-green); text-shadow: var(--ui-shadow); }
+    .block h3 { color: var(--ui-navy); }
+    .delta { color: var(--ui-burgundy); font-weight: 500; }
+    .mark { color: var(--ui-navy); }
+    .brand.on-light .mark, aside.on-light .mark { color: var(--navy); }
     .price-pill {
       grid-area: price;
       padding: 8px 14px; border-radius: var(--glass-r-panel); text-align: right;
       flex-shrink: 0; justify-self: end;
       width: var(--side-w); box-sizing: border-box;
     }
-    .price-pill span { display: block; font-size: 9px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+    .price-pill span { display: block; font-size: 9px; letter-spacing: .22em; text-transform: uppercase; }
     .price-pill strong { font-family: "Cormorant Garamond", serif; font-size: 20px; font-weight: 600; }
     .view-band {
       position: fixed; z-index: 22;
@@ -171,9 +207,9 @@
       box-sizing: border-box;
     }
     .aside-head { padding: 12px 12px 6px; }
-    .aside-head .kicker { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--green); }
+    .aside-head .kicker { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; }
     .aside-head h2 { font-family: "Cormorant Garamond", serif; font-size: 22px; font-weight: 600; line-height: 1.08; }
-    .aside-head p { margin-top: 4px; font-size: 11px; color: var(--muted); line-height: 1.35; }
+    .aside-head p { margin-top: 4px; font-size: 11px; line-height: 1.35; }
     .aside-body {
       flex: 0 1 auto; overflow: auto; padding: 4px 12px 8px;
       -webkit-overflow-scrolling: touch;
@@ -181,7 +217,7 @@
     .block { margin-bottom: 14px; }
     .block:last-child { margin-bottom: 4px; }
     .block h3 {
-      font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--navy);
+      font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
       margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
     }
     .block h3::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(197,164,110,.55), transparent); }
@@ -208,10 +244,9 @@
     }
     .swatch.on .chip { box-shadow: 0 0 0 1px var(--gold), 0 0 0 3px var(--navy), inset 0 8px 12px rgba(255,255,255,.35); }
     .swatch small {
-      display: block; margin-top: 7px; font-size: 10px; color: var(--muted); line-height: 1.25;
+      display: block; margin-top: 7px; font-size: 10px; line-height: 1.25;
     }
-    .swatch.on small { color: var(--navy); font-weight: 500; }
-    .delta { color: var(--burgundy); font-weight: 500; }
+    .swatch.on small { font-weight: 500; }
     .cards { display: grid; gap: 8px; }
     .card {
       appearance: none; width: 100%; text-align: left; cursor: pointer;
@@ -228,19 +263,17 @@
       background: var(--glass-fill-on);
     }
     .card b { display: block; font-size: 12px; font-weight: 600; }
-    .card span { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .card span { display: block; font-size: 11px; margin-top: 2px; }
     .spec { display: grid; }
     .spec li {
       list-style: none; display: flex; justify-content: space-between; gap: 12px;
       padding: 10px 0; font-size: 13px; border-bottom: 1px solid rgba(197,164,110,.35);
     }
-    .spec li span { color: var(--muted); }
     .spec .tot { font-family: "Cormorant Garamond", serif; font-size: 22px; border-bottom: 0; padding-top: 14px; }
     .ghost, .go {
       appearance: none; cursor: pointer;
       border-radius: var(--glass-r-btn); min-height: 44px; padding: 0 14px;
       font-size: 11px; letter-spacing: .16em; text-transform: uppercase; font-weight: 600;
-      color: var(--navy);
       background: var(--glass-fill);
       border: var(--glass-border);
       box-shadow: var(--glass-inset);
@@ -272,12 +305,44 @@
     #loader {
       position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
       background:
-        radial-gradient(ellipse at 50% 30%, #cfe0e6, #6a9aaa 58%, #1c3a4a 100%);
+        radial-gradient(ellipse at 42% 28%, #1a5a7a 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 80%, #0a2a48 0%, transparent 50%),
+        linear-gradient(165deg, #0c4a6e 0%, #0a3558 42%, #061e36 100%);
     }
     #loader.hide { opacity: 0; pointer-events: none; transition: opacity 1s ease; }
-    .load-card { width: min(420px, calc(100vw - 40px)); padding: 32px; border-radius: 24px; text-align: center; }
-    .load-card h2 { font-family: "Cormorant Garamond", serif; font-size: 36px; margin: 8px 0 6px; }
-    .load-card p { color: var(--muted); font-size: 13px; }
+    .load-card {
+      width: min(420px, calc(100vw - 40px)); padding: 32px; border-radius: 24px; text-align: center;
+      color: #e8f2f8;
+    }
+    .load-card h2 { font-family: "Cormorant Garamond", serif; font-size: 36px; margin: 8px 0 6px; color: #f4efe4; }
+    .load-card p { color: rgba(232,242,248,.72); font-size: 13px; }
+    .load-card .mark {
+      border-color: rgba(197,164,110,.85);
+      color: var(--gold);
+      background: rgba(6,30,54,.35);
+    }
+    .load-card .pct { color: rgba(244,239,228,.9); }
+    .load-card #loadDetail { color: rgba(232,242,248,.55); }
+    .load-card .track {
+      background: rgba(6,30,54,.45);
+      border-color: rgba(197,164,110,.5);
+    }
+    .brand-mark {
+      position: fixed;
+      z-index: 55;
+      right: calc(22px + env(safe-area-inset-right, 0px));
+      bottom: calc(22px + var(--safe-b));
+      width: min(160px, 30vw);
+      height: auto;
+      pointer-events: none;
+      opacity: 1;
+      background: transparent !important;
+      /* Gold-on-transparent: kill any residual black plate against the scene */
+      mix-blend-mode: screen;
+      filter: none;
+    }
+    #loader .brand-mark { z-index: 56; mix-blend-mode: screen; }
+    body.ready .brand-mark { z-index: 24; opacity: .95; }
     .track {
       margin: 22px auto 10px; height: 6px; width: 100%;
       background: rgba(11,31,58,.12); position: relative; overflow: hidden;
@@ -336,6 +401,11 @@
       }
       .handle { display: block; }
       .frame { inset: 6px; }
+      .brand-mark {
+        right: 14px;
+        bottom: calc(72px + var(--safe-b));
+        width: min(112px, 30vw);
+      }
     }
     @media (max-width: 520px) {
       .brand p { display: none; }
@@ -368,6 +438,7 @@
       <div id="loadDetail">Preparing 5.2 MB model</div>
     </div>
   </div>
+  <img class="brand-mark" src="./assets/tiyan-logo.png?v=4" alt="TIYAN" width="160" height="113" decoding="async" />
   <header>
     <div class="brand glass">
       <div class="mark">A</div>
@@ -424,9 +495,9 @@
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
     import { Sky } from 'three/addons/objects/Sky.js';
-    import { Water } from 'three/addons/objects/Water.js';
     import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
     import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+    import { Water } from 'three/addons/objects/Water.js';
 
     window.__dbg = {};
     window.addEventListener('error', e => { window.__dbg.pageError = e.message; });
@@ -469,13 +540,13 @@
       { id: 'cream', name: 'Cream canvas', hex: '#e9dfcc', metal: 0.03, rough: 0.5, sheen: 0.22, price: 1800 }
     ];
     const TEXTILES = [
-      { id: 'linen', name: 'Natural linen', hex: '#d9cbb6', sheen: 0.42, rough: 0.62, price: 0 },
-      { id: 'navy', name: 'Navy wool', hex: '#1c2b44', sheen: 0.62, rough: 0.52, price: 3200 },
-      { id: 'forest', name: 'Forest velvet', hex: '#1f3d32', sheen: 1, rough: 0.38, price: 4800 },
-      { id: 'claret', name: 'Claret leather', hex: '#5c2430', sheen: 0.78, rough: 0.3, price: 6400 },
-      { id: 'sand', name: 'Sand bouclé', hex: '#c8b49a', sheen: 0.45, rough: 0.68, price: 2800 },
-      { id: 'charcoal', name: 'Charcoal flannel', hex: '#3a3f45', sheen: 0.5, rough: 0.55, price: 2600 },
-      { id: 'cream', name: 'Cream cashmere', hex: '#eee4d4', sheen: 0.7, rough: 0.42, price: 5600 }
+      { id: 'linen', name: 'Natural linen stripe', hex: '#d9cbb6', sheen: 0.42, rough: 0.62, price: 0, pattern: 'stripe' },
+      { id: 'navy', name: 'Navy herringbone', hex: '#1c2b44', sheen: 0.55, rough: 0.52, price: 3200, pattern: 'herringbone' },
+      { id: 'forest', name: 'Forest damask', hex: '#1f3d32', sheen: 0.85, rough: 0.4, price: 4800, pattern: 'damask' },
+      { id: 'claret', name: 'Claret leather', hex: '#5c2430', sheen: 0.78, rough: 0.3, price: 6400, pattern: 'leather' },
+      { id: 'sand', name: 'Sand geometric', hex: '#c8b49a', sheen: 0.45, rough: 0.65, price: 2800, pattern: 'diamond' },
+      { id: 'charcoal', name: 'Charcoal houndstooth', hex: '#3a3f45', sheen: 0.48, rough: 0.55, price: 2600, pattern: 'houndstooth' },
+      { id: 'cream', name: 'Cream botanical', hex: '#eee4d4', sheen: 0.65, rough: 0.45, price: 5600, pattern: 'botanical' }
     ];
     const WOODS = [
       { id: 'walnut', name: 'Dark walnut', a: '#6b4228', b: '#24140c', price: 0 },
@@ -494,7 +565,7 @@
       { id: 'black', name: 'Black chrome', hex: '#1a1c1e', metal: 1, rough: 0.12, aniso: 0.55, price: 5400 }
     ];
     const ROPES = [
-      { id: 'natural', name: 'Natural hemp', hex: '#8f6e3a', price: 0 },
+      { id: 'natural', name: 'Natural hemp', hex: '#d9d0c0', price: 0 },
       { id: 'black', name: 'Black polyester', hex: '#1a1a1a', price: 1400 }
     ];
     const LIGHTS = [
@@ -506,10 +577,10 @@
       { id: 'red', name: 'Traditional red', hex: '#6b1a18', price: 1100 }
     ];
     const PACKAGES = [
-      { id: 'midnight', name: 'Midnight Club', blurb: 'Navy hull, ivory topsides, charcoal linen.', hull: 'navy', super: 'ivory', roof: 'tele', textile: 'charcoal', wood: 'walnut', deck: 'teak', metal: 'steel', rope: 'natural', anti: 'black', price: 0 },
-      { id: 'augusta', name: 'Augusta Green', blurb: 'Club-green hull and forest velvet.', hull: 'hunter', super: 'ivory', roof: 'forest', textile: 'forest', wood: 'oak', deck: 'bleach', metal: 'bronze', rope: 'natural', anti: 'navy', price: 14500 },
+      { id: 'midnight', name: 'Midnight Club', blurb: 'Navy hull, ivory topsides, charcoal houndstooth.', hull: 'navy', super: 'ivory', roof: 'tele', textile: 'charcoal', wood: 'walnut', deck: 'teak', metal: 'steel', rope: 'natural', anti: 'black', price: 0 },
+      { id: 'augusta', name: 'Augusta Green', blurb: 'Club-green hull and forest damask.', hull: 'hunter', super: 'ivory', roof: 'forest', textile: 'forest', wood: 'oak', deck: 'bleach', metal: 'bronze', rope: 'natural', anti: 'navy', price: 14500 },
       { id: 'carmine', name: 'Carmine Sport', blurb: 'Carmine metallic, carbon roof, claret leather.', hull: 'carmine', super: 'polar', roof: 'carbon', textile: 'claret', wood: 'ebony', deck: 'grey', metal: 'black', rope: 'black', anti: 'red', price: 28500 },
-      { id: 'pearl', name: 'Pearl Coast', blurb: 'Ivory hull, champagne accents, linen and teak.', hull: 'pearl', super: 'sand', roof: 'cream', textile: 'linen', wood: 'oak', deck: 'teak', metal: 'steel', rope: 'natural', anti: 'black', price: 7800 }
+      { id: 'pearl', name: 'Pearl Coast', blurb: 'Ivory hull, linen stripe and teak.', hull: 'pearl', super: 'sand', roof: 'cream', textile: 'linen', wood: 'oak', deck: 'teak', metal: 'steel', rope: 'natural', anti: 'black', price: 7800 }
     ];
     const STEPS = [
       { id: 'packages', kicker: '01 — Packages', title: 'A considered starting point', blurb: 'Four atelier compositions.' },
@@ -581,88 +652,175 @@
         Math.round(lerp(a[2], b[2], t))
       ];
     }
-    /** Photoreal lacquered joinery maps — albedo + roughness + normal */
-    function makeWoodSuite(aHex, bHex, repeat = 1.85) {
-      const size = 1024;
-      const light = hexRgb(aHex);
-      const dark = hexRgb(bHex);
-      const mid = mixRgb(light, dark, 0.42);
-      const albedo = document.createElement('canvas'); albedo.width = albedo.height = size;
-      const roughC = document.createElement('canvas'); roughC.width = roughC.height = size;
-      const normC = document.createElement('canvas'); normC.width = normC.height = size;
-      const actx = albedo.getContext('2d');
-      const rctx = roughC.getContext('2d');
-      const nctx = normC.getContext('2d');
-      const aImg = actx.createImageData(size, size);
-      const rImg = rctx.createImageData(size, size);
-      const nImg = nctx.createImageData(size, size);
-      const height = new Float32Array(size * size);
-
-      // Deterministic-ish hash for stable grain
+    /** Re-unwrap mesh UVs — authored GLB UVs are stretched; box / cylinder / planar fixes that. */
+    function reprojectUVs(geometry, mode = 'box', scale = 1) {
+      if (!geometry?.attributes?.position) return;
+      if (!geometry.attributes.normal) geometry.computeVertexNormals();
+      geometry.computeBoundingBox();
+      const pos = geometry.attributes.position;
+      const nrm = geometry.attributes.normal;
+      const box = geometry.boundingBox;
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const uvs = new Float32Array(pos.count * 2);
+      const p = new THREE.Vector3();
+      const n = new THREE.Vector3();
+      const cx = (box.min.x + box.max.x) * 0.5;
+      const cz = (box.min.z + box.max.z) * 0.5;
+      for (let i = 0; i < pos.count; i++) {
+        p.fromBufferAttribute(pos, i);
+        n.fromBufferAttribute(nrm, i);
+        let u = 0, v = 0;
+        if (mode === 'planarY') {
+          u = ((p.x - box.min.x) / Math.max(size.x, 1e-4)) * scale;
+          v = ((p.z - box.min.z) / Math.max(size.z, 1e-4)) * scale;
+        } else if (mode === 'cylinderY') {
+          u = (Math.atan2(p.x - cx, p.z - cz) / (Math.PI * 2) + 0.5) * scale;
+          v = ((p.y - box.min.y) / Math.max(size.y, 1e-4)) * scale * 0.55;
+        } else {
+          const ax = Math.abs(n.x), ay = Math.abs(n.y), az = Math.abs(n.z);
+          if (ay >= ax && ay >= az) {
+            u = ((p.x - box.min.x) / Math.max(size.x, 1e-4)) * scale;
+            v = ((p.z - box.min.z) / Math.max(size.z, 1e-4)) * scale;
+          } else if (ax >= az) {
+            u = ((p.z - box.min.z) / Math.max(size.z, 1e-4)) * scale;
+            v = ((p.y - box.min.y) / Math.max(size.y, 1e-4)) * scale;
+          } else {
+            u = ((p.x - box.min.x) / Math.max(size.x, 1e-4)) * scale;
+            v = ((p.y - box.min.y) / Math.max(size.y, 1e-4)) * scale;
+          }
+        }
+        uvs[i * 2] = u;
+        uvs[i * 2 + 1] = v;
+      }
+      geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+      geometry.attributes.uv.needsUpdate = true;
+    }
+    function uvModeFor(cat, name = '') {
+      if (cat === 'hull' || cat === 'anti' || cat === 'rope') return { mode: 'cylinderY', scale: 2.4 };
+      if (cat === 'deck' || /floor|Stairs|Parquet|Deck/i.test(name)) return { mode: 'planarY', scale: 1.8 };
+      if (cat === 'textile') return { mode: 'planarY', scale: 1.35 };
+      if (cat === 'wood' || cat === 'interior' || cat === 'roof') return { mode: 'box', scale: 2.0 };
+      if (cat === 'super' || cat === 'trim') return { mode: 'box', scale: 1.4 };
+      return { mode: 'box', scale: 1.6 };
+    }
+    function makeAoMap(size = 512) {
+      // Soft contact grit only — NEVER edge-framed tiles (those read as hull/canopy stripes).
+      const c = document.createElement('canvas'); c.width = c.height = size;
+      const ctx = c.getContext('2d');
+      const img = ctx.createImageData(size, size);
       const hash = (x, y) => {
         const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
         return s - Math.floor(s);
       };
-      const fbm = (x, y) => {
-        let v = 0, amp = 0.5, f = 1;
-        for (let o = 0; o < 5; o++) {
-          v += amp * hash(x * f, y * f);
-          f *= 2.03; amp *= 0.5;
-        }
-        return v;
+      const smooth = (x, y) => {
+        const n =
+          hash(x, y) * 0.45 +
+          hash(x * 0.5, y * 0.5) * 0.3 +
+          hash(x * 0.17, y * 0.19) * 0.25;
+        return n;
       };
-
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const n = smooth(x * 0.11, y * 0.11);
+          // Keep AO very light — real contact shading comes from lights/shadows
+          const ao = 0.88 + n * 0.12;
+          const i = (y * size + x) * 4;
+          const g = Math.round(ao * 255);
+          img.data[i] = img.data[i + 1] = img.data[i + 2] = g;
+          img.data[i + 3] = 255;
+        }
+      }
+      ctx.putImageData(img, 0, 0);
+      const map = new THREE.CanvasTexture(c);
+      map.wrapS = map.wrapT = THREE.RepeatWrapping;
+      map.repeat.set(6, 6);
+      map.colorSpace = THREE.NoColorSpace;
+      map.anisotropy = rendererMaxAniso();
+      return map;
+    }
+    function makeImperfections(size = 512) {
+      const c = document.createElement('canvas'); c.width = c.height = size;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#808080'; ctx.fillRect(0, 0, size, size);
+      for (let i = 0; i < 14000; i++) {
+        const v = 70 + Math.random() * 90;
+        ctx.fillStyle = `rgb(${v},${v},${v})`;
+        ctx.fillRect(Math.random() * size, Math.random() * size, 1 + (Math.random() > 0.92 ? 1 : 0), 1);
+      }
+      for (let i = 0; i < 18; i++) {
+        ctx.strokeStyle = `rgba(255,255,255,${0.04 + Math.random() * 0.06})`;
+        ctx.lineWidth = 1 + Math.random() * 2;
+        ctx.beginPath();
+        const x = Math.random() * size, y = Math.random() * size;
+        ctx.arc(x, y, 20 + Math.random() * 80, Math.random() * 6, Math.random() * 6 + 1);
+        ctx.stroke();
+      }
+      const map = new THREE.CanvasTexture(c);
+      map.wrapS = map.wrapT = THREE.RepeatWrapping;
+      map.repeat.set(3.5, 3.5);
+      map.colorSpace = THREE.NoColorSpace;
+      map.anisotropy = rendererMaxAniso();
+      return map;
+    }
+    /** Lacquered veneer with pores, dust and cavity shading */
+    function makeWoodSuite(aHex, bHex, repeat = 1.85) {
+      const size = 768;
+      const light = hexRgb(aHex);
+      const dark = mixRgb(hexRgb(aHex), hexRgb(bHex), 0.62);
+      const albedo = document.createElement('canvas'); albedo.width = albedo.height = size;
+      const roughC = document.createElement('canvas'); roughC.width = roughC.height = size;
+      const normC = document.createElement('canvas'); normC.width = normC.height = size;
+      const aoC = document.createElement('canvas'); aoC.width = aoC.height = size;
+      const actx = albedo.getContext('2d');
+      const rctx = roughC.getContext('2d');
+      const nctx = normC.getContext('2d');
+      const aoctx = aoC.getContext('2d');
+      const aImg = actx.createImageData(size, size);
+      const rImg = rctx.createImageData(size, size);
+      const nImg = nctx.createImageData(size, size);
+      const aoImg = aoctx.createImageData(size, size);
+      const height = new Float32Array(size * size);
+      const hash = (x, y) => {
+        const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+        return s - Math.floor(s);
+      };
       for (let y = 0; y < size; y++) {
         for (let x = 0; x < size; x++) {
           const u = x / size, v = y / size;
-          // Flowing longitudinal grain with gentle waves
-          const warp = Math.sin(v * Math.PI * 2.4 + fbm(u * 3, v * 2) * 2.2) * 0.045
-            + Math.sin(v * Math.PI * 9.5 + fbm(u * 8, v * 6) * 1.4) * 0.012;
+          const warp = Math.sin(v * Math.PI * 1.4 + hash(u * 3, v) * 1.1) * 0.012;
           const g = u + warp;
-          // Growth rings
-          const ring = Math.sin(g * Math.PI * 42 + fbm(g * 12, v * 4) * 1.8);
-          const ring2 = Math.sin(g * Math.PI * 110 + v * 6);
-          const fine = fbm(g * 90, v * 18);
-          const poreLane = Math.abs(Math.sin(g * Math.PI * 56 + v * 2));
-          const pore = poreLane > 0.92 && hash(x * 0.7, y * 1.3) > 0.55 ? hash(x, y) : 0;
-
-          let tone = 0.52
-            + ring * 0.16
-            + ring2 * 0.05
-            + (fine - 0.5) * 0.14
-            - pore * 0.22;
-          // Soft earlywood / latewood banding
-          tone += Math.sin(g * Math.PI * 18) * 0.04;
-          tone = Math.max(0, Math.min(1, tone));
-
+          const band = Math.sin(g * Math.PI * 26) * 0.5 + 0.5;
+          const fine = hash(g * 48, v * 10);
+          const pore = hash(g * 90, v * 40) > 0.93 ? hash(x, y) : 0;
+          const dust = hash(u * 14, v * 14);
+          let tone = 0.56 + (band - 0.5) * 0.1 + (fine - 0.5) * 0.05 - pore * 0.22;
+          tone -= (1 - Math.min(u, v, 1 - u, 1 - v) * 5) * 0.04; // soft edge AO in tile
+          tone = Math.max(0.28, Math.min(0.88, tone));
           const rgb = mixRgb(dark, light, tone);
-          // Subtle warmth noise
-          const warm = (hash(x * 0.2, y * 0.2) - 0.5) * 6;
+          const warm = (dust - 0.5) * 8;
           const i = (y * size + x) * 4;
           aImg.data[i] = Math.max(0, Math.min(255, rgb[0] + warm));
-          aImg.data[i + 1] = Math.max(0, Math.min(255, rgb[1] + warm * 0.55));
-          aImg.data[i + 2] = Math.max(0, Math.min(255, rgb[2] - warm * 0.25));
+          aImg.data[i + 1] = Math.max(0, Math.min(255, rgb[1] + warm * 0.5));
+          aImg.data[i + 2] = Math.max(0, Math.min(255, rgb[2] - warm * 0.2));
           aImg.data[i + 3] = 255;
-
-          // Roughness: pores + earlywood rougher, latewood / lacquer smoother
-          const rough = 0.22 + pore * 0.45 + (1 - tone) * 0.12 + fine * 0.08;
-          const rv = Math.max(18, Math.min(210, Math.round(rough * 255)));
-          rImg.data[i] = rImg.data[i + 1] = rImg.data[i + 2] = rv;
+          const rv = Math.round(70 + (1 - tone) * 55 + pore * 70 + dust * 20);
+          rImg.data[i] = rImg.data[i + 1] = rImg.data[i + 2] = Math.max(30, Math.min(220, rv));
           rImg.data[i + 3] = 255;
-
-          height[y * size + x] = tone * 0.55 + pore * 0.7 + fine * 0.15;
+          const ao = Math.round((0.55 + tone * 0.35 - pore * 0.25) * 255);
+          aoImg.data[i] = aoImg.data[i + 1] = aoImg.data[i + 2] = Math.max(60, Math.min(255, ao));
+          aoImg.data[i + 3] = 255;
+          height[y * size + x] = tone * 0.35 + pore * 0.55 + fine * 0.1;
         }
       }
-
-      // Normal from height
       for (let y = 0; y < size; y++) {
         for (let x = 0; x < size; x++) {
           const xm = height[y * size + ((x - 1 + size) % size)];
           const xp = height[y * size + ((x + 1) % size)];
           const ym = height[((y - 1 + size) % size) * size + x];
           const yp = height[((y + 1) % size) * size + x];
-          let nx = (xm - xp) * 3.2;
-          let ny = (ym - yp) * 3.2;
+          let nx = (xm - xp) * 1.4;
+          let ny = (ym - yp) * 1.4;
           let nz = 1;
           const len = Math.hypot(nx, ny, nz) || 1;
           nx /= len; ny /= len; nz /= len;
@@ -676,24 +834,12 @@
       actx.putImageData(aImg, 0, 0);
       rctx.putImageData(rImg, 0, 0);
       nctx.putImageData(nImg, 0, 0);
-
-      // Soft varnish sheen streaks on albedo
-      actx.globalCompositeOperation = 'soft-light';
-      for (let i = 0; i < 14; i++) {
-        const x = (i / 14) * size + Math.sin(i * 1.7) * 20;
-        const g = actx.createLinearGradient(x - 8, 0, x + 8, 0);
-        g.addColorStop(0, 'rgba(255,230,190,0)');
-        g.addColorStop(0.5, 'rgba(255,236,210,0.18)');
-        g.addColorStop(1, 'rgba(255,230,190,0)');
-        actx.fillStyle = g;
-        actx.fillRect(x - 10, 0, 20, size);
-      }
-      actx.globalCompositeOperation = 'source-over';
-
+      aoctx.putImageData(aoImg, 0, 0);
       const map = new THREE.CanvasTexture(albedo);
       const roughnessMap = new THREE.CanvasTexture(roughC);
       const normalMap = new THREE.CanvasTexture(normC);
-      [map, roughnessMap, normalMap].forEach(t => {
+      const aoMap = new THREE.CanvasTexture(aoC);
+      [map, roughnessMap, normalMap, aoMap].forEach(t => {
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         t.repeat.set(repeat, repeat);
         t.anisotropy = rendererMaxAniso();
@@ -703,7 +849,133 @@
       map.colorSpace = THREE.SRGBColorSpace;
       roughnessMap.colorSpace = THREE.NoColorSpace;
       normalMap.colorSpace = THREE.NoColorSpace;
-      return { map, roughnessMap, normalMap, mid };
+      aoMap.colorSpace = THREE.NoColorSpace;
+      return { map, roughnessMap, normalMap, aoMap };
+    }
+    function makeFabricPattern(pattern = 'stripe') {
+      const size = 512;
+      const c = document.createElement('canvas'); c.width = c.height = size;
+      const ctx = c.getContext('2d');
+      // Near-white base so MeshPhysicalMaterial color tint keeps motif readable
+      ctx.fillStyle = '#f4f0ea'; ctx.fillRect(0, 0, size, size);
+      const ink = 'rgba(22, 18, 14, 0.52)';
+      const inkSoft = 'rgba(22, 18, 14, 0.28)';
+      const chalk = 'rgba(255, 255, 255, 0.3)';
+      if (pattern === 'stripe') {
+        for (let x = 0; x < size; x += 12) {
+          ctx.fillStyle = x % 24 === 0 ? ink : inkSoft;
+          ctx.fillRect(x, 0, 5, size);
+        }
+        for (let y = 0; y < size; y += 2) {
+          ctx.fillStyle = chalk;
+          ctx.fillRect(0, y, size, 1);
+        }
+      } else if (pattern === 'herringbone') {
+        const cell = 20;
+        ctx.lineWidth = 2;
+        for (let y = 0; y < size; y += cell) {
+          for (let x = 0; x < size; x += cell) {
+            const flip = ((x / cell) + (y / cell)) % 2 === 0;
+            ctx.strokeStyle = ink;
+            ctx.beginPath();
+            if (flip) { ctx.moveTo(x, y + cell); ctx.lineTo(x + cell, y); }
+            else { ctx.moveTo(x, y); ctx.lineTo(x + cell, y + cell); }
+            ctx.stroke();
+            ctx.strokeStyle = chalk;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            if (flip) { ctx.moveTo(x + 2, y + cell); ctx.lineTo(x + cell, y + 2); }
+            else { ctx.moveTo(x + 2, y); ctx.lineTo(x + cell, y + cell - 2); }
+            ctx.stroke();
+            ctx.lineWidth = 2;
+          }
+        }
+      } else if (pattern === 'houndstooth') {
+        // Softer woven look: bigger cells + slight blur + lower contrast
+        const cell = 28;
+        ctx.filter = 'blur(0.8px)';
+        for (let y = 0; y < size; y += cell) {
+          for (let x = 0; x < size; x += cell) {
+            const on = ((x / cell) + (y / cell)) % 2 === 0;
+            ctx.fillStyle = on ? 'rgba(18, 18, 22, 0.22)' : 'rgba(255,255,255,0.06)';
+            ctx.beginPath();
+            ctx.moveTo(x + cell * 0.5, y);
+            ctx.lineTo(x + cell, y + cell * 0.35);
+            ctx.lineTo(x + cell * 0.5, y + cell);
+            ctx.lineTo(x, y + cell * 0.65);
+            ctx.closePath();
+            ctx.fill();
+          }
+        }
+        ctx.filter = 'none';
+      } else if (pattern === 'diamond') {
+        const cell = 32;
+        for (let y = -cell; y < size + cell; y += cell) {
+          for (let x = -cell; x < size + cell; x += cell) {
+            ctx.strokeStyle = ink;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x + cell * 0.5, y + 3);
+            ctx.lineTo(x + cell - 3, y + cell * 0.5);
+            ctx.lineTo(x + cell * 0.5, y + cell - 3);
+            ctx.lineTo(x + 3, y + cell * 0.5);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.strokeStyle = chalk;
+            ctx.strokeRect(x + cell * 0.28, y + cell * 0.28, cell * 0.44, cell * 0.44);
+          }
+        }
+      } else if (pattern === 'damask') {
+        const step = 72;
+        for (let y = 0; y < size; y += step) {
+          for (let x = 0; x < size; x += step) {
+            const cx = x + step / 2, cy = y + step / 2;
+            ctx.fillStyle = inkSoft;
+            ctx.beginPath();
+            for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) {
+              const r = a % (Math.PI / 4) < 0.15 ? 26 : 14;
+              const px = cx + Math.cos(a) * r;
+              const py = cy + Math.sin(a) * r;
+              if (a === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.closePath(); ctx.fill();
+            ctx.strokeStyle = ink;
+            ctx.lineWidth = 1.4; ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+            ctx.fillStyle = chalk; ctx.fill();
+          }
+        }
+      } else if (pattern === 'botanical') {
+        for (let i = 0; i < 55; i++) {
+          const cx = (i * 97) % size, cy = (i * 53) % size;
+          ctx.strokeStyle = ink;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.quadraticCurveTo(cx + 20, cy - 26, cx + 10, cy - 40);
+          ctx.stroke();
+          ctx.fillStyle = inkSoft;
+          ctx.beginPath();
+          ctx.ellipse(cx + 5, cy - 14, 9, 4, -0.6, 0, Math.PI * 2);
+          ctx.ellipse(cx + 14, cy - 26, 8, 3.5, -0.3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else {
+        for (let i = 0; i < size; i += 3) {
+          ctx.fillStyle = chalk;
+          ctx.fillRect(i, 0, 1, size);
+          ctx.fillStyle = inkSoft;
+          ctx.fillRect(0, i, size, 1);
+        }
+      }
+      const map = new THREE.CanvasTexture(c);
+      map.wrapS = map.wrapT = THREE.RepeatWrapping;
+      const rep = (pattern === 'botanical' || pattern === 'damask') ? 1.7 : (pattern === 'houndstooth' ? 1.0 : (pattern === 'stripe' ? 3.6 : 2.4));
+      map.repeat.set(rep, rep);
+      map.colorSpace = THREE.SRGBColorSpace;
+      map.anisotropy = rendererMaxAniso();
+      return map;
     }
     const tex = {};
     function buildTextures() {
@@ -723,23 +995,15 @@
           ctx.fillRect(Math.random() * s, Math.random() * s, 1, 1);
         }
       }, 22, THREE.NoColorSpace);
-      tex.fabric = canvasTex(1024, (ctx, s) => {
-        ctx.fillStyle = '#d8d0c4'; ctx.fillRect(0, 0, s, s);
-        for (let i = 0; i < s; i++) {
-          const w = i % 3 === 0;
-          ctx.fillStyle = w ? 'rgba(255,255,255,.07)' : 'rgba(40,30,20,.05)';
-          ctx.fillRect(i, 0, 1, s);
-          ctx.fillStyle = w ? 'rgba(255,255,255,.05)' : 'rgba(30,24,18,.045)';
-          ctx.fillRect(0, i, s, 1);
-        }
-        // Bouclé / yarn nubs
-        for (let i = 0; i < 1800; i++) {
-          ctx.fillStyle = `rgba(255,250,240,${0.04 + Math.random() * 0.08})`;
-          ctx.beginPath();
-          ctx.ellipse(Math.random() * s, Math.random() * s, 1 + Math.random() * 2, 0.6 + Math.random(), Math.random() * 3, 0, 6.3);
-          ctx.fill();
-        }
-      }, 14);
+      tex.fabricPatterns = Object.create(null);
+      tex.fabricFor = (pattern = 'stripe') => {
+        const key = pattern || 'stripe';
+        if (!tex.fabricPatterns[key]) tex.fabricPatterns[key] = makeFabricPattern(key);
+        return tex.fabricPatterns[key];
+      };
+      tex.fabric = tex.fabricFor('stripe');
+      tex.ao = makeAoMap(512);
+      tex.imperfections = makeImperfections(512);
       tex.leather = canvasTex(1024, (ctx, s) => {
         ctx.fillStyle = '#6a3a38'; ctx.fillRect(0, 0, s, s);
         for (let i = 0; i < 22000; i++) {
@@ -789,16 +1053,16 @@
             for (let x = 0; x <= size; x += 10) ctx.lineTo(x, yy + Math.sin(x * 0.02 + i) * 1.2);
             ctx.stroke();
           }
-          // black caulking seam
-          ctx.fillStyle = 'rgba(12,10,8,.92)';
-          ctx.fillRect(0, y + plank - 3, size, 3);
+          // Soft caulking seam (not barcode black)
+          ctx.fillStyle = 'rgba(55,42,28,.38)';
+          ctx.fillRect(0, y + plank - 2, size, 2);
           // bevel highlight
-          ctx.fillStyle = 'rgba(255,230,190,.12)';
-          ctx.fillRect(0, y + 1, size, 2);
+          ctx.fillStyle = 'rgba(255,230,190,.1)';
+          ctx.fillRect(0, y + 1, size, 1);
         }
         const map = new THREE.CanvasTexture(c);
         map.wrapS = map.wrapT = THREE.RepeatWrapping;
-        map.repeat.set(4.5, 4.5);
+        map.repeat.set(2.8, 2.8);
         map.colorSpace = THREE.SRGBColorSpace;
         map.anisotropy = rendererMaxAniso();
         return map;
@@ -810,22 +1074,18 @@
           ctx.fillRect(0, y, s, 1);
         }
       }, 14);
-      // Soft fibre weave for rubbing-strake rope
-      tex.rope = canvasTex(512, (ctx, s) => {
-        ctx.fillStyle = '#a88858'; ctx.fillRect(0, 0, s, s);
-        for (let i = 0; i < s; i += 2) {
-          ctx.fillStyle = i % 4 === 0 ? 'rgba(255,240,210,.08)' : 'rgba(40,28,12,.07)';
-          ctx.fillRect(i, 0, 1, s);
+      // Soft fibre rope — no strong stripes (UVs stretch along the rub rail)
+      tex.rope = canvasTex(256, (ctx, s) => {
+        ctx.fillStyle = '#c4a06a'; ctx.fillRect(0, 0, s, s);
+        for (let i = 0; i < 9000; i++) {
+          const x = Math.random() * s, y = Math.random() * s;
+          const light = Math.random() > 0.55;
+          ctx.fillStyle = light
+            ? `rgba(255,245,220,${0.04 + Math.random() * 0.07})`
+            : `rgba(60,40,18,${0.04 + Math.random() * 0.08})`;
+          ctx.fillRect(x, y, 1 + (Math.random() > 0.85 ? 1 : 0), 1);
         }
-        for (let y = 0; y < s; y += 3) {
-          ctx.fillStyle = 'rgba(30,22,10,.05)';
-          ctx.fillRect(0, y, s, 1);
-        }
-        for (let i = 0; i < 900; i++) {
-          ctx.fillStyle = `rgba(255,245,220,${0.03 + Math.random() * 0.06})`;
-          ctx.fillRect(Math.random() * s, Math.random() * s, 1, 1 + Math.random() * 2);
-        }
-      }, 18);
+      }, 1.6);
       tex.waterN = canvasTex(512, (ctx, s) => {
         const g = ctx.createLinearGradient(0, 0, s, s);
         g.addColorStop(0, '#6060a8');
@@ -895,8 +1155,7 @@
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.42;
     renderer.setClearColor(0x87b8c8, 1);
-    renderer.shadowMap.enabled = !mobile;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = false;
     _aniso = Math.min(16, renderer.capabilities.getMaxAnisotropy());
     RectAreaLightUniformsLib.init();
 
@@ -927,7 +1186,7 @@
         const panel = document.getElementById('panel');
         const occluded = panel ? Math.min(panel.getBoundingClientRect().right + 24, w * 0.48) : 300;
         // Shift optical center into the open stage so the yacht sits clear of the left panel
-        camera.setViewOffset(w, h, -Math.round(occluded * 0.95), 0, w, h);
+        camera.setViewOffset(w, h, -Math.round(occluded * 0.88), 0, w, h);
       }
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -939,13 +1198,7 @@
 
     const sun = new THREE.Vector3();
     const sunLight = new THREE.DirectionalLight(0xfff1dc, 1.85);
-    sunLight.castShadow = !mobile;
-    sunLight.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048);
-    sunLight.shadow.camera.near = 1;
-    sunLight.shadow.camera.far = 90;
-    sunLight.shadow.camera.left = sunLight.shadow.camera.bottom = -20;
-    sunLight.shadow.camera.right = sunLight.shadow.camera.top = 20;
-    sunLight.shadow.bias = -0.0002;
+    sunLight.castShadow = false;
     scene.add(sunLight);
     scene.add(sunLight.target);
 
@@ -973,6 +1226,8 @@
     const pmrem = new THREE.PMREMGenerator(renderer);
     let envRT = null;
     let water;
+    let deep;
+    let yachtRestY = 0;
 
     function setLighting(id = 'noon') {
       const L = find(LIGHTS, 'noon') || LIGHTS[0];
@@ -1005,12 +1260,14 @@
       scene.fog.far = 700;
       flareLight.position.copy(sun).multiplyScalar(220);
       flareLight.visible = true;
-      if (water?.material) {
-        if (water.material.color) water.material.color.setHex(L.water);
-        if (water.material.uniforms?.sunDirection) water.material.uniforms.sunDirection.value.copy(sun).normalize();
-        if (water.material.uniforms?.waterColor) water.material.uniforms.waterColor.value.setHex(L.water);
-        if (water.material.uniforms?.sunColor) water.material.uniforms.sunColor.value.setHex(0xd8e4ea);
-        if (water.material.uniforms?.distortionScale) water.material.uniforms.distortionScale.value = 0.75;
+      if (water?.material?.uniforms) {
+        const u = water.material.uniforms;
+        if (u.sunDirection) u.sunDirection.value.copy(sun).normalize();
+        if (u.waterColor) u.waterColor.value.setHex(0x0a5568);
+        if (u.sunColor) u.sunColor.value.setHex(0xffffff);
+        if (u.distortionScale) u.distortionScale.value = 1.7;
+        if (u.size) u.size.value = 2.6;
+        if (u.alpha) u.alpha.value = 1;
       }
       try {
         const envScene = new THREE.Scene();
@@ -1032,53 +1289,111 @@
       if (shared.light) shared.light.emissiveIntensity = 1.4;
     }
 
+    /**
+     * Water.js copies the main camera projection into its mirror camera.
+     * With setViewOffset that projection is asymmetric and reflections smear
+     * (three.js#30587 / SO 78279629). Clear the offset for the mirror pass only.
+     */
+    function patchWaterViewOffset(waterMesh) {
+      const orig = waterMesh.onBeforeRender;
+      waterMesh.onBeforeRender = function (renderer, scene, cam) {
+        const saved = cam.view
+          ? {
+              fullWidth: cam.view.fullWidth,
+              fullHeight: cam.view.fullHeight,
+              offsetX: cam.view.offsetX,
+              offsetY: cam.view.offsetY,
+              width: cam.view.width,
+              height: cam.view.height
+            }
+          : null;
+        if (saved) {
+          cam.clearViewOffset();
+          cam.updateProjectionMatrix();
+        }
+        // Skip non-essentials in the reflection RT (forum tip: second pass is the cost)
+        const hide = [];
+        const flareWas = flareLight ? flareLight.visible : false;
+        if (deep) { hide.push([deep, deep.visible]); deep.visible = false; }
+        if (flareLight) flareLight.visible = false;
+        try {
+          orig.call(this, renderer, scene, cam);
+        } finally {
+          hide.forEach(([o, v]) => { o.visible = v; });
+          if (flareLight) flareLight.visible = flareWas;
+          if (saved) {
+            cam.setViewOffset(
+              saved.fullWidth, saved.fullHeight,
+              saved.offsetX, saved.offsetY,
+              saved.width, saved.height
+            );
+            cam.updateProjectionMatrix();
+          }
+        }
+      };
+    }
+
     function makeWater(normals) {
       if (normals) {
         normals.wrapS = normals.wrapT = THREE.RepeatWrapping;
-        normals.repeat.set(4, 4);
+        normals.repeat.set(1, 1);
         normals.anisotropy = 8;
       }
-      try {
-        const geo = new THREE.PlaneGeometry(800, 800);
-        water = new Water(geo, {
-          textureWidth: mobile ? 256 : 512,
-          textureHeight: mobile ? 256 : 512,
-          waterNormals: normals,
-          sunDirection: sun.clone().normalize(),
-          sunColor: 0xffffff,
-          waterColor: 0x053440,
-          distortionScale: 0.85,
-          fog: true,
-          alpha: 1.0
-        });
-        water.rotation.x = -Math.PI / 2;
-        water.position.y = 0;
-        if (water.material?.uniforms?.size) water.material.uniforms.size.value = 3.2;
-        scene.add(water);
-      } catch (e) {
-        window.__dbg.waterErr = String(e);
-        const mat = new THREE.MeshPhysicalMaterial({
-          color: 0x042830,
-          metalness: 0.72,
-          roughness: 0.06,
-          envMapIntensity: 2.4,
-          clearcoat: 0.9,
-          clearcoatRoughness: 0.1,
-          normalMap: normals || null,
-          normalScale: new THREE.Vector2(0.85, 0.85)
-        });
-        water = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), mat);
-        water.rotation.x = -Math.PI / 2;
-        water.position.y = 0;
-        water.receiveShadow = true;
-        scene.add(water);
+      if (water) {
+        scene.remove(water);
+        water.geometry?.dispose?.();
+        water.material?.dispose?.();
+        water = null;
       }
+      // Realtime flat-mirror water (three.js Ocean) — calm Med look, cheap RT
+      // distortionScale kept modest: Water.js uses ~(1/distance)*scale, which
+      // muddies close hull reflections if set like the far-ocean demo (3.7+).
+      const res = mobile ? 256 : 768;
+      water = new Water(new THREE.PlaneGeometry(800, 800, 1, 1), {
+        textureWidth: res,
+        textureHeight: res,
+        waterNormals: normals || tex.waterN,
+        sunDirection: sun.clone().normalize(),
+        sunColor: 0xffffff,
+        waterColor: 0x0a5568,
+        distortionScale: 1.7,
+        fog: false,
+        alpha: 1,
+        clipBias: 0.0004
+      });
+      water.rotation.x = -Math.PI / 2;
+      water.position.y = 0;
+      water.receiveShadow = false;
+      if (water.material?.uniforms?.size) water.material.uniforms.size.value = 2.6;
+      // Clamp close-range distortion (Water.js uses 1/distance → muddy hull reflections)
+      if (water.material?.fragmentShader) {
+        let fs = water.material.fragmentShader;
+        fs = fs.replace(
+          'vec2 distortion = surfaceNormal.xz * ( 0.001 + 1.0 / distance ) * distortionScale;',
+          'vec2 distortion = surfaceNormal.xz * ( 0.001 + min( 1.0 / distance, 0.085 ) ) * distortionScale;'
+        );
+        // Stronger sky/sun sparkle + slightly brighter scatter for Med water
+        fs = fs.replace(
+          'sunLight( surfaceNormal, eyeDirection, 100.0, 2.0, 0.5, diffuseLight, specularLight );',
+          'sunLight( surfaceNormal, eyeDirection, 140.0, 2.8, 0.55, diffuseLight, specularLight );'
+        );
+        fs = fs.replace(
+          'vec3 scatter = max( 0.0, dot( surfaceNormal, eyeDirection ) ) * waterColor;',
+          'vec3 scatter = max( 0.0, dot( surfaceNormal, eyeDirection ) ) * waterColor * 1.35;'
+        );
+        water.material.fragmentShader = fs;
+        water.material.needsUpdate = true;
+      }
+      patchWaterViewOffset(water);
+      scene.add(water);
+      if (window.__three) window.__three.water = water;
       setLighting(state.light);
     }
     const loaderTex = new THREE.TextureLoader();
     const waterNormalUrls = [
-      'https://threejs.org/examples/textures/waternormals.jpg',
-      'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/textures/waternormals.jpg'
+      './assets/waternormals.jpg',
+      'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r186/examples/textures/waternormals.jpg',
+      'https://raw.githubusercontent.com/mrdoob/three.js/r160/examples/textures/waternormals.jpg'
     ];
     function loadWaterNormals(i = 0) {
       if (i >= waterNormalUrls.length) {
@@ -1094,19 +1409,19 @@
     }
     loadWaterNormals();
 
-    const deep = new THREE.Mesh(
-      new THREE.CircleGeometry(180, 64),
-      new THREE.MeshBasicMaterial({ color: 0x021c24, transparent: true, opacity: 0.22, depthWrite: false })
+    deep = new THREE.Mesh(
+      new THREE.CircleGeometry(220, 64),
+      new THREE.MeshBasicMaterial({ color: 0x021c24, transparent: true, opacity: 0.12, depthWrite: false, depthWrite: false })
     );
     deep.rotation.x = -Math.PI / 2;
-    deep.position.y = -0.12;
+    deep.position.y = -0.35;
     scene.add(deep);
 
     const groups = { hull: [], anti: [], super: [], roof: [], textile: [], wood: [], deck: [], metal: [], rope: [], glass: [], light: [], trim: [], interior: [] };
     const shared = {};
 
     function paintMat(opt) {
-      // Automotive gelcoat: dielectric base + clearcoat. High metalness washes reds to rose.
+      // Solid gelcoat — tiled AO/roughness/peel maps stripe on large hull & super panels
       const flake = opt.flake ?? 0.2;
       const isLight = (() => {
         const c = new THREE.Color(opt.hex);
@@ -1114,19 +1429,16 @@
       })();
       return new THREE.MeshPhysicalMaterial({
         color: opt.hex,
-        metalness: THREE.MathUtils.clamp(flake * 0.55, 0.02, 0.38),
-        roughness: opt.rough ?? 0.4,
-        roughnessMap: flake > 0.15 ? tex.flake : null,
-        clearcoat: 1,
-        clearcoatRoughness: isLight ? 0.045 : 0.028,
-        clearcoatNormalMap: tex.peel,
-        clearcoatNormalScale: new THREE.Vector2(0.04, 0.04),
-        envMapIntensity: isLight ? 0.75 : 0.95,
-        iridescence: opt.pearl ? 0.22 : 0,
+        metalness: THREE.MathUtils.clamp(flake * 0.28, 0.02, 0.22),
+        roughness: (opt.rough ?? 0.4) + (isLight ? 0.04 : 0.08),
+        clearcoat: isLight ? 0.78 : 0.88,
+        clearcoatRoughness: isLight ? 0.14 : 0.1,
+        envMapIntensity: isLight ? 0.7 : 0.85,
+        iridescence: opt.pearl ? 0.18 : 0,
         iridescenceIOR: 1.3,
         iridescenceThicknessRange: opt.pearl ? [120, 380] : [100, 400],
         sheen: 0,
-        specularIntensity: 0.85,
+        specularIntensity: 0.75,
         specularColor: isLight ? 0xffffff : 0xfff5f0
       });
     }
@@ -1136,42 +1448,54 @@
       const c = new THREE.Color(opt.hex);
       const isLight = c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722 > 0.55;
       mat.color.set(opt.hex);
-      mat.metalness = THREE.MathUtils.clamp(flake * 0.55, 0.02, 0.38);
-      mat.roughness = opt.rough ?? 0.4;
-      mat.roughnessMap = flake > 0.15 ? tex.flake : null;
-      mat.clearcoat = 1;
-      mat.clearcoatRoughness = isLight ? 0.045 : 0.028;
-      mat.envMapIntensity = isLight ? 0.75 : 0.95;
-      mat.iridescence = opt.pearl ? 0.22 : 0;
+      mat.metalness = THREE.MathUtils.clamp(flake * 0.28, 0.02, 0.22);
+      mat.roughness = (opt.rough ?? 0.4) + (isLight ? 0.04 : 0.08);
+      mat.map = null;
+      mat.roughnessMap = null;
+      mat.aoMap = null;
+      mat.aoMapIntensity = 0;
+      mat.normalMap = null;
+      mat.clearcoatNormalMap = null;
+      mat.clearcoat = isLight ? 0.78 : 0.88;
+      mat.clearcoatRoughness = isLight ? 0.14 : 0.1;
+      mat.envMapIntensity = isLight ? 0.7 : 0.85;
+      mat.iridescence = opt.pearl ? 0.18 : 0;
       mat.sheen = 0;
-      mat.specularIntensity = 0.85;
+      mat.specularIntensity = 0.75;
       mat.specularColor.set(isLight ? 0xffffff : 0xfff5f0);
       mat.needsUpdate = true;
       return mat;
     }
     function fabricMat(opt) {
-      const isLeather = /leather|claret/i.test(opt.name || opt.id || '');
+      const isLeather = opt.pattern === 'leather' || /leather|claret/i.test(opt.name || opt.id || '');
+      const tint = new THREE.Color(opt.hex).lerp(new THREE.Color('#f3eee6'), isLeather ? 0.08 : 0.28);
       return new THREE.MeshPhysicalMaterial({
-        color: opt.hex,
-        map: isLeather ? tex.leather : tex.fabric,
+        color: tint,
+        map: isLeather ? tex.leather : tex.fabricFor(opt.pattern || 'stripe'),
         metalness: 0,
-        roughness: isLeather ? Math.min(opt.rough, 0.38) : opt.rough,
+        roughness: isLeather ? Math.min(opt.rough, 0.42) : Math.max(opt.rough, 0.55),
         sheen: opt.sheen,
         sheenColor: opt.hex,
-        sheenRoughness: isLeather ? 0.28 : 0.42,
-        clearcoat: isLeather ? 0.35 : 0.05,
-        clearcoatRoughness: isLeather ? 0.35 : 0.6,
-        envMapIntensity: isLeather ? 0.85 : 0.55,
-        specularIntensity: isLeather ? 0.7 : 0.35
+        sheenRoughness: isLeather ? 0.35 : 0.55,
+        clearcoat: isLeather ? 0.22 : 0.02,
+        clearcoatRoughness: isLeather ? 0.45 : 0.7,
+        envMapIntensity: isLeather ? 0.65 : 0.4,
+        specularIntensity: isLeather ? 0.55 : 0.25
       });
     }
     function roofMat(opt) {
       return new THREE.MeshPhysicalMaterial({
-        color: opt.hex, map: opt.carbon ? tex.carbon : tex.fabric,
-        metalness: opt.metal, roughness: opt.rough,
-        sheen: opt.sheen || 0, sheenColor: opt.hex,
-        clearcoat: opt.carbon ? 0.55 : 0.1, clearcoatRoughness: opt.carbon ? 0.22 : 0.55,
-        envMapIntensity: opt.carbon ? 1.35 : 0.65
+        color: opt.hex,
+        map: null,
+        metalness: opt.carbon ? (opt.metal || 0.35) : 0,
+        roughness: opt.rough ?? (opt.carbon ? 0.38 : 0.78),
+        sheen: opt.carbon ? 0 : (opt.sheen || 0.4),
+        sheenColor: opt.hex,
+        sheenRoughness: 0.6,
+        clearcoat: opt.carbon ? 0.4 : 0.04,
+        clearcoatRoughness: opt.carbon ? 0.28 : 0.7,
+        envMapIntensity: opt.carbon ? 1.05 : 0.4,
+        specularIntensity: opt.carbon ? 0.75 : 0.22
       });
     }
     function disposeWoodSuite(suite) {
@@ -1179,6 +1503,7 @@
       suite.map?.dispose();
       suite.roughnessMap?.dispose();
       suite.normalMap?.dispose();
+      suite.aoMap?.dispose();
     }
     function woodMat(opt) {
       const suite = tex.wood(opt.a, opt.b);
@@ -1186,30 +1511,28 @@
         map: suite.map,
         roughnessMap: suite.roughnessMap,
         normalMap: suite.normalMap,
-        normalScale: new THREE.Vector2(0.42, 0.42),
+        normalScale: new THREE.Vector2(0.18, 0.18),
         color: 0xffffff,
         metalness: 0,
-        roughness: 0.34,
-        clearcoat: 1,
-        clearcoatRoughness: 0.06,
-        clearcoatNormalMap: suite.normalMap,
-        clearcoatNormalScale: new THREE.Vector2(0.14, 0.14),
-        envMapIntensity: 1.15,
-        specularIntensity: 1,
+        roughness: 0.45,
+        clearcoat: 0.55,
+        clearcoatRoughness: 0.22,
+        envMapIntensity: 0.75,
+        specularIntensity: 0.55,
         sheen: 0.08,
         sheenColor: new THREE.Color(opt.a),
-        sheenRoughness: 0.55
+        sheenRoughness: 0.65
       });
     }
     function deckMat(opt) {
       return new THREE.MeshPhysicalMaterial({
         map: tex.deck(opt.a, opt.b),
         metalness: 0,
-        roughness: 0.48,
-        clearcoat: 0.22,
-        clearcoatRoughness: 0.45,
-        envMapIntensity: 0.7,
-        specularIntensity: 0.45
+        roughness: 0.58,
+        clearcoat: 0.12,
+        clearcoatRoughness: 0.55,
+        envMapIntensity: 0.55,
+        specularIntensity: 0.35
       });
     }
     function metalMat(opt) {
@@ -1231,9 +1554,22 @@
     function rebuildShared() {
       shared.hull = applyPaint(shared.hull, find(HULLS, state.hull));
       if (!shared.anti) {
-        shared.anti = new THREE.MeshPhysicalMaterial({ color: find(ANTIS, state.anti).hex, metalness: 0.08, roughness: 0.55, clearcoat: 0.4, clearcoatRoughness: 0.25, envMapIntensity: 0.6 });
+        shared.anti = new THREE.MeshPhysicalMaterial({
+          color: find(ANTIS, state.anti).hex,
+          metalness: 0.06,
+          roughness: 0.62,
+          clearcoat: 0.15,
+          clearcoatRoughness: 0.45,
+          envMapIntensity: 0.45,
+          polygonOffset: true,
+          polygonOffsetFactor: 1,
+          polygonOffsetUnits: 1
+        });
       } else {
         shared.anti.color.set(find(ANTIS, state.anti).hex);
+        shared.anti.polygonOffset = true;
+        shared.anti.polygonOffsetFactor = 1;
+        shared.anti.polygonOffsetUnits = 1;
         shared.anti.needsUpdate = true;
       }
       shared.super = applyPaint(shared.super, find(SUPERS, state.super));
@@ -1242,26 +1578,34 @@
       if (!shared.roof) shared.roof = roofMat(roof);
       else {
         shared.roof.color.set(roof.hex);
-        shared.roof.map = roof.carbon ? tex.carbon : tex.fabric;
-        shared.roof.metalness = roof.metal;
-        shared.roof.roughness = roof.rough;
-        shared.roof.sheen = roof.sheen || 0;
+        shared.roof.map = null;
+        shared.roof.aoMap = null;
+        shared.roof.roughnessMap = null;
+        shared.roof.aoMapIntensity = 0;
+        shared.roof.metalness = roof.carbon ? (roof.metal || 0.35) : 0;
+        shared.roof.roughness = roof.rough ?? (roof.carbon ? 0.35 : 0.72);
+        shared.roof.sheen = roof.carbon ? 0 : (roof.sheen || 0.45);
         shared.roof.sheenColor.set(roof.hex);
-        shared.roof.clearcoat = roof.carbon ? 0.55 : 0.1;
-        shared.roof.clearcoatRoughness = roof.carbon ? 0.22 : 0.55;
-        shared.roof.envMapIntensity = roof.carbon ? 1.1 : 0.55;
+        shared.roof.clearcoat = roof.carbon ? 0.55 : 0.06;
+        shared.roof.clearcoatRoughness = roof.carbon ? 0.22 : 0.65;
+        shared.roof.envMapIntensity = roof.carbon ? 1.25 : 0.5;
         shared.roof.needsUpdate = true;
       }
 
       const textile = find(TEXTILES, state.textile);
+      const isLeather = textile.pattern === 'leather' || /leather|claret/i.test(textile.name || textile.id || '');
+      const textileTint = new THREE.Color(textile.hex).lerp(new THREE.Color('#f3eee6'), isLeather ? 0.08 : 0.32);
       if (!shared.textile) shared.textile = fabricMat(textile);
       else {
-        shared.textile.color.set(textile.hex);
-        shared.textile.map = /leather|claret/i.test(textile.name || textile.id || '') ? tex.leather : tex.fabric;
-        shared.textile.roughness = textile.rough;
+        shared.textile.color.copy(textileTint);
+        shared.textile.map = isLeather ? tex.leather : tex.fabricFor(textile.pattern || 'stripe');
+        shared.textile.aoMap = null;
+        shared.textile.roughnessMap = null;
+        shared.textile.aoMapIntensity = 0;
+        shared.textile.roughness = isLeather ? Math.min(textile.rough, 0.38) : textile.rough;
         shared.textile.sheen = textile.sheen;
         shared.textile.sheenColor.set(textile.hex);
-        shared.textile.clearcoat = /leather|claret/i.test(textile.name || '') ? 0.35 : 0.05;
+        shared.textile.clearcoat = isLeather ? 0.35 : 0.05;
         shared.textile.needsUpdate = true;
       }
 
@@ -1318,6 +1662,10 @@
       });
       assign(groups.hull, shared.hull);
       assign(groups.anti, shared.anti);
+      // Hull draws after antifouling so the topsides win the waterline seam
+      groups.hull.forEach(m => { m.renderOrder = 1; });
+      groups.anti.forEach(m => { m.renderOrder = 0; });
+      ensureBootstripe();
       assign(groups.super, shared.super);
       assign(groups.roof, shared.roof);
       assign(groups.textile, shared.textile);
@@ -1339,13 +1687,13 @@
       }
       if (m.includes('Hull_anitfouling')) return 'anti';
       if (m.includes('Hull_5004')) return 'hull';
-      if (m.includes('Tent_')) return 'roof';
-      if (m.startsWith('Stof_')) return 'textile';
+      if (m.includes('Tent_') || /Cockpit_roof/i.test(o)) return 'roof';
+      if (m.startsWith('Stof_') || /curtain|Cockpit_sofa|Sofa$/i.test(o) || /^Sofa0/i.test(o)) return 'textile';
       if (m.includes('Construction_9001') || m.includes('Construction_9003')) return 'super';
-      if (m.includes('Wood_')) return 'wood';
+      if (m.includes('Wood_') || /_sofa_wood|Sofa_wood/i.test(o)) return 'wood';
       if (m.includes('Deck_floor') || m.includes('Parquet')) return 'deck';
       if (m.includes('Stainless') || m.includes('aluminium')) return 'metal';
-      if (/rope|Rope_naturaal|black_rope/i.test(m + o)) return 'rope';
+      if (/rope|Rope_naturaal|black_rope|Yacht_rope/i.test(m + o)) return 'rope';
       if (m.includes('glass')) return 'glass';
       if (m.includes('Material_light')) return 'light';
       if (m.includes('blauw')) return 'trim';
@@ -1365,45 +1713,79 @@
           map: suite.map,
           roughnessMap: suite.roughnessMap,
           normalMap: suite.normalMap,
-          normalScale: new THREE.Vector2(0.38, 0.38),
+          normalScale: new THREE.Vector2(0.2, 0.2),
           metalness: 0,
-          roughness: 0.36,
-          clearcoat: 0.95,
-          clearcoatRoughness: 0.1,
-          envMapIntensity: 1.05
+          roughness: 0.48,
+          clearcoat: 0.45,
+          clearcoatRoughness: 0.28,
+          envMapIntensity: 0.7
         });
       }
       if (/Tv|Microwave|Induction|coffee|screen|switch|metal/i.test(n)) {
         return new THREE.MeshPhysicalMaterial({
-          color: 0x2a2e34, metalness: 0.82, roughness: 0.28,
-          map: tex.metal, envMapIntensity: 1.1, clearcoat: 0.2, clearcoatRoughness: 0.15
+          color: 0x2a2e34, metalness: 0.72, roughness: 0.38,
+          map: tex.metal,
+          envMapIntensity: 0.95, clearcoat: 0.15, clearcoatRoughness: 0.25
         });
       }
-      if (/Sink|Seat|Cup|Plateau|Stand|ceramic/i.test(n)) {
+      if (/Sink|Seat|Cup|Plateau|Stand|ceramic|table/i.test(n)) {
         return new THREE.MeshPhysicalMaterial({
-          color: 0xf7f4ef, metalness: 0.05, roughness: 0.18,
-          clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 0.9
+          color: 0xf0ebe4, metalness: 0.04, roughness: 0.32,
+          clearcoat: 0.55, clearcoatRoughness: 0.22, envMapIntensity: 0.7
         });
       }
       if (/Clock|Lampe|lamp|curtain/i.test(n)) {
         return new THREE.MeshPhysicalMaterial({
-          color: 0xd9cfc0, map: tex.fabric, metalness: 0, roughness: 0.52,
-          sheen: 0.45, sheenColor: 0xe8dfd0, envMapIntensity: 0.45
+          color: 0xd9cfc0, map: tex.fabric, metalness: 0, roughness: 0.58,
+          sheen: 0.4, sheenColor: 0xe8dfd0, envMapIntensity: 0.35
         });
       }
       if (/floor|Stairs|Parquet|Deck/i.test(n)) {
         return new THREE.MeshPhysicalMaterial({
           map: tex.deck('#c9a574', '#8a6840'),
-          metalness: 0.02, roughness: 0.46,
-          clearcoat: 0.3, clearcoatRoughness: 0.42, envMapIntensity: 0.65
+          metalness: 0.02, roughness: 0.55,
+          clearcoat: 0.18, clearcoatRoughness: 0.5, envMapIntensity: 0.55
         });
       }
-      // Default: warm plaster walls / ceiling
       return new THREE.MeshPhysicalMaterial({
-        color: 0xf2ebe2, map: tex.wall, metalness: 0.02, roughness: 0.55,
+        color: 0xf2ebe2, map: tex.wall, metalness: 0.02, roughness: 0.62,
         normalMap: tex.plasterN, normalScale: new THREE.Vector2(0.18, 0.18),
-        envMapIntensity: 0.45
+        envMapIntensity: 0.4
       });
+    }
+
+    function patchAntiBootstripe(mat, topY, band = 0.022) {
+      const bootWhite = new THREE.Color(0xf7f5f0);
+      mat.onBeforeCompile = (shader) => {
+        shader.uniforms.bootTopY = { value: topY };
+        shader.uniforms.bootBand = { value: band };
+        shader.uniforms.bootWhite = { value: bootWhite };
+        shader.vertexShader = shader.vertexShader
+          .replace('#include <common>', '#include <common>\nvarying float vBootWorldY;')
+          .replace(
+            '#include <worldpos_vertex>',
+            '#include <worldpos_vertex>\nvBootWorldY = worldPosition.y;'
+          );
+        shader.fragmentShader = shader.fragmentShader
+          .replace('#include <common>', '#include <common>\nvarying float vBootWorldY;\nuniform float bootTopY;\nuniform float bootBand;\nuniform vec3 bootWhite;')
+          .replace(
+            '#include <color_fragment>',
+            `#include <color_fragment>
+            float bootT = smoothstep(bootTopY - bootBand, bootTopY - bootBand * 0.15, vBootWorldY);
+            diffuseColor.rgb = mix(diffuseColor.rgb, bootWhite, bootT);`
+          );
+      };
+      mat.customProgramCacheKey = () => `anti-boot-${topY.toFixed(3)}`;
+      mat.needsUpdate = true;
+    }
+
+    function ensureBootstripe() {
+      const anti = groups.anti[0];
+      if (!anti || !shared.anti) return;
+      const aBox = new THREE.Box3().setFromObject(anti);
+      // Narrow white band along the top edge of antifouling only
+      patchAntiBootstripe(shared.anti, aBox.max.y, 0.02);
+      groups.anti.forEach(m => { m.material = shared.anti; });
     }
 
     let yacht = new THREE.Group();
@@ -1442,8 +1824,14 @@
         const matName = Array.isArray(child.material) ? child.material[0]?.name || '' : child.material?.name || '';
         const cat = classify(matName, child.name || child.parent?.name || '');
         child.userData.category = cat;
+        // Rebuild UVs — GLB unwraps are stretched on cushions, decks, joinery
+        if (child.geometry && cat !== 'flag' && cat !== 'glass') {
+          const uv = uvModeFor(cat, child.name || '');
+          reprojectUVs(child.geometry, uv.mode, uv.scale);
+        }
         child.castShadow = cat !== 'glass' && cat !== 'flag';
-        child.receiveShadow = true;
+        // Large gelcoat panels self-shadow → stripe acne; they cast but don't receive
+        child.receiveShadow = !(cat === 'hull' || cat === 'super' || cat === 'roof' || cat === 'anti' || cat === 'trim');
         if (groups[cat] && cat !== 'interior' && cat !== 'flag') groups[cat].push(child);
         if (mobile && cat === 'prop') child.visible = false;
         // Keep authored Dutch flag materials from the GLB (do not replace with flat props)
@@ -1564,13 +1952,15 @@
       } catch (e) {
         window.__dbg.matErr = String(e && e.stack || e);
       }
-      // Soften water contact: no bright foam ring; slightly sink water under hull reflection
-      if (water) water.position.y = -0.02;
+      // Keep antifouling coplanar; polygonOffset + bootstripe shader handle the seam
+      if (water) water.position.y = 0;
+      yachtRestY = yacht.position.y;
       flyTo('hero', true);
       composeView();
-      window.__three = { scene, camera, renderer, yacht, water, sky };
+      window.__three = { scene, camera, renderer, yacht, water, sky, controls, shared };
       setProgress(1, 'Ready', '');
       document.getElementById('loader').classList.add('hide');
+      document.body.classList.add('ready');
       setTimeout(() => document.getElementById('loader')?.remove(), 900);
     }
 
@@ -1604,23 +1994,26 @@
       fromFov: 34, toFov: 34
     };
     function viewPose(id) {
-      const size = bbox.isEmpty() ? new THREE.Vector3(5, 4, 15) : bbox.getSize(new THREE.Vector3());
-      const c = bbox.isEmpty() ? new THREE.Vector3(0, 1.2, 0) : bbox.getCenter(new THREE.Vector3());
-      const span = Math.max(size.x, size.z, 6);
-      // Authored interior overviews — eye-height, clear look-through of each room
-      const interior = {
-        salon: { p: [-0.15, 1.52, 1.35], t: [0.1, 1.32, -0.85], fov: 48 },
-        galley: { p: [0.25, 1.45, -1.45], t: [-0.15, 1.25, -2.85], fov: 50 },
-        cabin: { p: [0.05, 1.28, -3.95], t: [0.05, 1.12, -5.25], fov: 48 },
-        master: { p: [0.05, 1.35, 3.45], t: [0.1, 1.2, 5.0], fov: 48 },
-        bridge: { p: [0.25, 2.58, 4.05], t: [0.22, 2.4, 2.45], fov: 46 }
-      };
-      if (interior[id]) return interior[id];
+      // Locked to user reference screenshots (world space after yacht mount).
+      // Hull stern ≈ +Z 7.6, bow ≈ −Z −7.6.
       const poses = {
-        hero: { p: [c.x + span * 1.25, Math.max(2.4, c.y + size.y * 0.08), c.z + span * 0.12], t: [c.x, Math.max(0.55, c.y * 0.28), c.z], fov: 34 },
-        bow: { p: [c.x + span * 0.28, Math.max(1.7, c.y + 0.35), c.z + span * 0.85], t: [c.x, Math.max(0.7, c.y * 0.45), c.z + span * 0.15], fov: 36 },
-        stern: { p: [c.x + span * 0.75, Math.max(1.7, c.y + 0.3), c.z - span * 0.7], t: [c.x, Math.max(0.7, c.y * 0.45), c.z - span * 0.12], fov: 36 },
-        aerial: { p: [c.x + span * 0.2, c.y + span * 1.05, c.z + span * 0.08], t: [c.x, 0.2, c.z], fov: 42 }
+        // PROFILE — full starboard silhouette in open stage (clear of left panel)
+        hero: { p: [28.6, 5.35, 0.12], t: [0.35, 1.28, 0.0], fov: 30 },
+        // BOW ref — close swim-platform / Dutch flag (aft)
+        bow: { p: [3.15, 1.48, 12.35], t: [0.55, 1.28, 6.55], fov: 40 },
+        // STERN ref — aft three-quarter looking forward along starboard
+        stern: { p: [9.4, 2.35, 9.6], t: [-0.15, 1.35, -0.8], fov: 36 },
+        aerial: { p: [3.2, 14.5, 1.2], t: [0, 0.2, 0], fov: 42 },
+        // BRIDGE — left of pilot chair, wheel on the right, looking out the glass
+        bridge: { p: [-0.22, 2.78, 4.25], t: [0.35, 2.52, 1.45], fov: 50 },
+        // GALLEY — from the companionway toward the cooktop / sink corner
+        galley: { p: [0.55, 1.48, -1.2], t: [-0.25, 1.18, -3.2], fov: 52 },
+        // SALON — aisle, slight starboard look to clear the center pillar
+        salon: { p: [-0.28, 1.62, 2.05], t: [0.45, 1.32, -1.05], fov: 48 },
+        // CABIN (Bedroom_2) — just inside the doorway, clear view of the berth
+        cabin: { p: [0.2, 1.1, -4.65], t: [0.05, 0.95, -6.2], fov: 50 },
+        // MASTER (Bedroom1) — foot of bed toward the forward window
+        master: { p: [0.0, 1.08, 2.85], t: [0.1, 1.18, 5.55], fov: 48 }
       };
       return poses[id] || poses.hero;
     }
@@ -1638,6 +2031,7 @@
     }
     function flyTo(id, instant) {
       state.view = id;
+      camera.userData._lastHeave = 0;
       const pose = viewPose(id);
       const inside = id === 'salon' || id === 'galley' || id === 'cabin' || id === 'master' || id === 'bridge';
       camTween.fromP.copy(camera.position);
@@ -1824,6 +2218,81 @@
     });
     addEventListener('resize', composeView);
 
+    const viewsNav = document.getElementById('views');
+    const _px = new Uint8Array(4);
+    let _contrastT = 0;
+    const contrastTargets = () => [
+      document.querySelector('.brand'),
+      document.getElementById('steps'),
+      document.querySelector('.price-pill'),
+      document.getElementById('panel'),
+      viewsNav
+    ].filter(Boolean);
+    function sampleLuminance(rect, points) {
+      const gl = renderer.getContext();
+      if (!gl || rect.width < 4 || rect.height < 4) return null;
+      const dpr = renderer.getPixelRatio();
+      let lumSum = 0, n = 0;
+      for (const [u, v] of points) {
+        const sx = Math.max(0, Math.min(gl.drawingBufferWidth - 1, Math.floor((rect.left + rect.width * u) * dpr)));
+        const sy = Math.max(0, Math.min(gl.drawingBufferHeight - 1, Math.floor((innerHeight - (rect.top + rect.height * v)) * dpr)));
+        try {
+          gl.readPixels(sx, sy, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, _px);
+          lumSum += (0.2126 * _px[0] + 0.7152 * _px[1] + 0.0722 * _px[2]) / 255;
+          n++;
+        } catch (_) { /* ignore */ }
+      }
+      return n ? lumSum / n : null;
+    }
+    function updateViewsContrast() {
+      if (!renderer) return;
+      for (const el of contrastTargets()) {
+        const rect = el.getBoundingClientRect();
+        const lum = sampleLuminance(rect, el === viewsNav
+          ? [[0.2, 0.5], [0.5, 0.5], [0.8, 0.5]]
+          : [[0.5, 0.35], [0.5, 0.65]]);
+        if (lum == null) continue;
+        el.classList.toggle('on-light', lum > (el.id === 'views' || el.classList.contains('views') ? 0.58 : 0.7));
+      }
+    }
+
+    const _float = { heave: 0, roll: 0, pitch: 0 };
+
+    /** Cheap swell: phase-locked to Water.time so the hull “rides” the same sea. */
+    function updateYachtFloat(dt) {
+      if (!yacht || reduced) return;
+      const wave = water?.material?.uniforms?.time?.value ?? clock.elapsedTime;
+      // Two-frequency heave + soft roll/pitch — no sim, ~zero cost
+      const heave =
+        Math.sin(wave * 0.52) * 0.055 +
+        Math.sin(wave * 0.91 + 1.15) * 0.022;
+      const roll =
+        Math.sin(wave * 0.41 + 0.4) * 0.014 +
+        Math.sin(wave * 0.19) * 0.005;
+      const pitch =
+        Math.sin(wave * 0.33 + 0.85) * 0.009 +
+        Math.sin(wave * 0.61 + 2.1) * 0.004;
+      const v = find(VIEWS, state.view);
+      const inside = v?.kind === 'int' || state.view === 'bridge';
+      const damp = inside ? 0.22 : 1;
+      // Smooth so flyTo / package changes don’t pop
+      const a = 1 - Math.exp(-dt * 4.5);
+      _float.heave += (heave * damp - _float.heave) * a;
+      _float.roll += ((inside ? 0 : roll) - _float.roll) * a;
+      _float.pitch += ((inside ? 0 : pitch) - _float.pitch) * a;
+      yacht.position.y = yachtRestY + _float.heave;
+      yacht.rotation.z = _float.roll;
+      yacht.rotation.x = _float.pitch;
+      // Keep interior cameras glued to the cabin so furniture doesn’t drift underfoot
+      if (inside && camTween.t >= 1) {
+        camera.position.y += _float.heave - (camera.userData._lastHeave || 0);
+        controls.target.y += _float.heave - (camera.userData._lastHeave || 0);
+        camera.userData._lastHeave = _float.heave;
+      } else {
+        camera.userData._lastHeave = 0;
+      }
+    }
+
     function tick() {
       requestAnimationFrame(tick);
       try {
@@ -1842,13 +2311,16 @@
           controls.update();
         }
         if (water?.material?.uniforms?.time) {
-          water.material.uniforms.time.value += dt * 0.28;
-        } else if (water?.material?.normalMap) {
-          water.material.normalMap.offset.x += dt * 0.004;
-          water.material.normalMap.offset.y += dt * 0.0025;
+          water.material.uniforms.time.value += dt * 0.32;
         }
+        updateYachtFloat(dt);
         renderer.setRenderTarget(null);
         renderer.render(scene, camera);
+        _contrastT += dt;
+        if (_contrastT > 0.22) {
+          _contrastT = 0;
+          updateViewsContrast();
+        }
       } catch (err) {
         window.__renderError = String(err && err.stack || err);
         renderer.setRenderTarget(null);
