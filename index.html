@@ -2608,10 +2608,10 @@
         const t = clock.elapsedTime;
         // ~11 s lazy heave, quieter second harmonic so it isn’t a metronome
         heave =
-          Math.sin(t * 0.547) * 0.068 +
-          Math.sin(t * 0.805 + 1.25) * 0.016;
-        roll = Math.sin(t * 0.476 + 0.55) * 0.0072;
-        pitch = Math.sin(t * 0.668 + 1.05) * 0.0036;
+          Math.sin(t * 0.547) * 0.11 +
+          Math.sin(t * 0.805 + 1.25) * 0.028;
+        roll = Math.sin(t * 0.476 + 0.55) * 0.013;
+        pitch = Math.sin(t * 0.668 + 1.05) * 0.0065;
         if (inside) {
           heave *= 0.16;
           roll = 0;
