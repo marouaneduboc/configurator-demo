@@ -1485,7 +1485,7 @@
       water.rotation.x = -Math.PI / 2;
       water.position.y = 0;
       water.receiveShadow = false;
-      if (water.material?.uniforms?.size) water.material.uniforms.size.value = 2.2;
+      if (water.material?.uniforms?.size) water.material.uniforms.size.value = mobile ? 2.0 : 1.75;
       // Clamp close-range distortion (Water.js uses 1/distance → muddy hull reflections)
       if (water.material?.fragmentShader) {
         let fs = water.material.fragmentShader;
@@ -1493,19 +1493,14 @@
           'vec2 distortion = surfaceNormal.xz * ( 0.001 + 1.0 / distance ) * distortionScale;',
           'vec2 distortion = surfaceNormal.xz * ( 0.001 + min( 1.0 / distance, 0.085 ) ) * distortionScale;'
         );
-        // Stronger sky/sun sparkle + slightly brighter scatter for Med water
         fs = fs.replace(
           'sunLight( surfaceNormal, eyeDirection, 100.0, 2.0, 0.5, diffuseLight, specularLight );',
-          'sunLight( surfaceNormal, eyeDirection, 140.0, 2.8, 0.55, diffuseLight, specularLight );'
-        );
-        fs = fs.replace(
-          'vec3 scatter = max( 0.0, dot( surfaceNormal, eyeDirection ) ) * waterColor;',
-          'vec3 scatter = max( 0.0, dot( surfaceNormal, eyeDirection ) ) * waterColor * 1.35;'
+          'sunLight( surfaceNormal, eyeDirection, 150.0, 3.0, 0.58, diffuseLight, specularLight );'
         );
         water.material.fragmentShader = fs;
         water.material.needsUpdate = true;
       }
-      injectHullWaterShader(water.material);
+      injectWaterLook(water.material);
       bindHullWaterMask(water);
       patchWaterViewOffset(water);
       scene.add(water);
@@ -1540,7 +1535,7 @@
     deep.position.y = -0.35;
     scene.add(deep);
 
-    function injectHullWaterShader(mat) {
+    function injectWaterLook(mat) {
       if (!mat?.fragmentShader || mat.userData.hullWater) return;
       if (!hullWater.map) {
         const c = document.createElement('canvas');
@@ -1552,6 +1547,8 @@
       mat.uniforms.hullMask = { value: hullWater.map };
       mat.uniforms.hullRect = { value: new THREE.Vector4(0, 0, 0, 0) };
       mat.uniforms.hullShift = { value: hullWater.shift };
+      // Calm chop only — 0 with reduced motion. No extra RTs / FFT.
+      mat.uniforms.uChop = { value: reduced ? 0.0 : (mobile ? 0.52 : 0.88) };
       let fs = mat.fragmentShader;
       if (!fs.includes('uniform vec3 waterColor;')) return;
       fs = fs.replace(
@@ -1559,25 +1556,64 @@
         `uniform vec3 waterColor;
          uniform sampler2D hullMask;
          uniform vec4 hullRect;
-         uniform vec2 hullShift;`
+         uniform vec2 hullShift;
+         uniform float uChop;`
+      );
+      fs = fs.replace(
+        'vec3 surfaceNormal = normalize( noise.xzy * vec3( 1.5, 1.0, 1.5 ) );',
+        `vec2 wp = worldPosition.xz;
+         vec2 slope = vec2( 0.0 );
+         float swell = 0.0;
+         if ( uChop > 0.001 ) {
+           vec2 d1 = vec2( 0.93, 0.37 );
+           float c1 = cos( 0.3927 * dot( d1, wp ) - 1.96 * time );
+           slope += d1 * ( 0.10 * uChop * c1 );
+           swell += 0.55 * c1;
+           vec2 d2 = vec2( -0.41, 0.91 );
+           float c2 = cos( 0.6981 * dot( d2, wp ) - 2.62 * time );
+           slope += d2 * ( 0.065 * uChop * c2 );
+           swell += 0.32 * c2;
+           vec2 d3 = vec2( 0.62, -0.78 );
+           float c3 = cos( 1.142 * dot( d3, wp ) - 3.35 * time );
+           slope += d3 * ( 0.04 * uChop * c3 );
+           swell += 0.18 * c3;
+         }
+         vec3 surfaceNormal = normalize( noise.xzy * vec3( 1.35, 1.0, 1.35 ) + vec3( slope.x, 0.0, slope.y ) );
+         float waveFoam = uChop * smoothstep( 0.38, 0.82, swell ) * smoothstep( 0.05, 0.42, noise.r ) * 0.28;`
+      );
+      fs = fs.replace(
+        'vec3 scatter = max( 0.0, dot( surfaceNormal, eyeDirection ) ) * waterColor;',
+        'vec3 scatter = ( max( 0.0, dot( surfaceNormal, eyeDirection ) ) * 1.42 + 0.11 * pow( 1.0 - max( dot( eyeDirection, surfaceNormal ), 0.0 ), 2.4 ) ) * waterColor;'
+      );
+      fs = fs.replace(
+        'float reflectance = rf0 + ( 1.0 - rf0 ) * pow( ( 1.0 - theta ), 5.0 );',
+        'float reflectance = rf0 + ( 1.0 - rf0 ) * pow( ( 1.0 - theta ), 4.15 );'
       );
       fs = fs.replace(
         'vec3 outgoingLight = albedo;',
         `vec3 outgoingLight = albedo;
+					float foam = waveFoam;
 					if ( hullRect.z > 0.0 ) {
 						vec2 hUv = ( worldPosition.xz - hullShift - hullRect.xy ) * hullRect.zw;
 						float occ = 0.0;
 						if ( hUv.x > 0.0 && hUv.y > 0.0 && hUv.x < 1.0 && hUv.y < 1.0 )
 							occ = texture2D( hullMask, hUv ).r;
 						if ( occ > 0.82 ) discard;
-						float foam = smoothstep( 0.06, 0.30, occ ) * smoothstep( 0.78, 0.44, occ );
-						float chop = texture2D( normalSampler, worldPosition.xz * 0.16 + vec2( time * 0.03, -time * 0.02 ) ).r;
-						foam *= 0.5 + 0.5 * chop;
-						outgoingLight = mix( outgoingLight, vec3( 0.90, 0.96, 1.0 ), clamp( foam, 0.0, 1.0 ) );
-					}`
+						float rim = smoothstep( 0.06, 0.30, occ ) * smoothstep( 0.78, 0.44, occ );
+						foam = max( foam, rim * ( 0.55 + 0.45 * noise.r ) );
+					}
+					outgoingLight = mix( outgoingLight, vec3( 0.88, 0.95, 1.0 ), clamp( foam, 0.0, 0.72 ) );`
       );
       mat.fragmentShader = fs;
       mat.needsUpdate = true;
+      window.__dbg = window.__dbg || {};
+      window.__dbg.waterLook = {
+        chop: mat.uniforms.uChop.value,
+        gerstner: fs.includes('uChop'),
+        foam: fs.includes('waveFoam'),
+        scatter: fs.includes('1.42'),
+        hull: fs.includes('hullRect')
+      };
     }
 
     function bindHullWaterMask(mesh) {
@@ -1698,21 +1734,19 @@
         const c = new THREE.Color(opt.hex);
         return c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722 > 0.55;
       })();
-      const baseRough = (opt.rough ?? 0.4) + (isLight ? 0.04 : 0.08);
       const mat = new THREE.MeshPhysicalMaterial({
         color: opt.hex,
         metalness: THREE.MathUtils.clamp(flake * 0.12, 0, 0.08),
-        roughness: pbrRough(baseRough, 0.38),
-        // Soft coat: UV paint-n streaks on long hull islands, and a sharp coat
-        // turns decimated vertex normals into chrome bands.
-        clearcoat: isLight ? 0.52 : 0.58,
-        clearcoatRoughness: isLight ? 0.24 : 0.3,
-        envMapIntensity: isLight ? 0.52 : 0.58,
+        roughness: (opt.rough ?? 0.4) + (isLight ? 0.02 : 0.04),
+        // Colour only — GLB vertex/split normals stay as exported
+        clearcoat: isLight ? 0.62 : 0.72,
+        clearcoatRoughness: isLight ? 0.12 : 0.1,
+        envMapIntensity: isLight ? 0.62 : 0.7,
         iridescence: opt.pearl ? 0.18 : 0,
         iridescenceIOR: 1.3,
         iridescenceThicknessRange: opt.pearl ? [120, 380] : [100, 400],
         sheen: 0,
-        specularIntensity: 0.55,
+        specularIntensity: 0.7,
         specularColor: isLight ? 0xffffff : 0xfff5f0
       });
       return mat;
@@ -1722,22 +1756,22 @@
       const flake = opt.flake ?? 0.2;
       const c = new THREE.Color(opt.hex);
       const isLight = c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722 > 0.55;
-      const baseRough = (opt.rough ?? 0.4) + (isLight ? 0.04 : 0.08);
       mat.color.set(opt.hex);
       mat.metalness = THREE.MathUtils.clamp(flake * 0.12, 0, 0.08);
-      mat.roughness = pbrRough(baseRough, 0.38);
+      mat.roughness = (opt.rough ?? 0.4) + (isLight ? 0.02 : 0.04);
       mat.map = null;
       mat.aoMap = null;
       mat.aoMapIntensity = 0;
       mat.normalMap = null;
       mat.clearcoatNormalMap = null;
+      mat.bumpMap = null;
       mat.roughnessMap = null;
-      mat.clearcoat = isLight ? 0.52 : 0.58;
-      mat.clearcoatRoughness = isLight ? 0.24 : 0.3;
-      mat.envMapIntensity = isLight ? 0.52 : 0.58;
+      mat.clearcoat = isLight ? 0.62 : 0.72;
+      mat.clearcoatRoughness = isLight ? 0.12 : 0.1;
+      mat.envMapIntensity = isLight ? 0.62 : 0.7;
       mat.iridescence = opt.pearl ? 0.18 : 0;
       mat.sheen = 0;
-      mat.specularIntensity = 0.55;
+      mat.specularIntensity = 0.7;
       mat.specularColor.set(isLight ? 0xffffff : 0xfff5f0);
       mat.needsUpdate = true;
       return mat;
@@ -2153,6 +2187,7 @@
         child.frustumCulled = false;
         child.visible = true;
         if (child.geometry) {
+          // Keep GLB normals/UVs as exported — bounding volumes only
           child.geometry.computeBoundingSphere();
           child.geometry.computeBoundingBox();
         }
