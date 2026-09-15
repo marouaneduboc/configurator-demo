@@ -116,13 +116,28 @@
     }
     .brand h1 { font-family: "Cormorant Garamond", serif; font-size: 19px; font-weight: 600; line-height: 1; letter-spacing: .06em; }
     .brand p { font-size: 9px; letter-spacing: .24em; text-transform: uppercase; margin-top: 3px; }
-    nav.steps {
-      grid-area: steps;
-      display: inline-flex; align-items: center; justify-content: center; gap: 0;
-      padding: 4px 6px; border-radius: var(--glass-r-pill); overflow-x: auto; scrollbar-width: none;
-      width: max-content; max-width: 100%; flex: 0 0 auto; justify-self: center;
-      -webkit-overflow-scrolling: touch;
+    .config-dock {
+      grid-area: steps; position: relative; z-index: 30;
+      width: min(760px, 100%); justify-self: center;
     }
+    .config-tabs {
+      display: flex; align-items: stretch; width: 100%;
+      border-radius: var(--glass-r-pill); overflow: hidden;
+    }
+    nav.steps {
+      display: flex; align-items: center; justify-content: center; gap: 0;
+      padding: 4px 10px; overflow-x: auto; scrollbar-width: none;
+      min-width: 0; flex: 1 1 auto;
+      scroll-padding-inline: 12px; -webkit-overflow-scrolling: touch;
+    }
+    .config-toggle {
+      appearance: none; flex: 0 0 46px; width: 46px; min-height: 42px;
+      display: grid; place-items: center; cursor: pointer;
+      color: var(--ui-muted); background: transparent;
+      border: 0; border-left: 1px solid rgba(255,255,255,.24);
+    }
+    .config-toggle span { font-size: 16px; transition: transform .28s ease; }
+    .config-toggle[aria-expanded="true"] span { transform: rotate(180deg); }
     nav.steps::-webkit-scrollbar, nav.views::-webkit-scrollbar { display: none; }
     .step, .view {
       appearance: none; border: 0; background: transparent; cursor: pointer;
@@ -138,7 +153,7 @@
       default = light type over dark water/sky; .on-light = dark type over bright backdrop.
       Accent hues (green / burgundy / gold / navy) are preserved, only luminance flips.
     */
-    .brand, .price-pill, nav.steps, aside, nav.views {
+    .brand, .price-pill, .config-tabs, aside, nav.views {
       --ui-ink: #ffffff;
       --ui-muted: rgba(255, 255, 255, 0.68);
       --ui-navy: #f4f7fb;
@@ -146,7 +161,7 @@
       --ui-burgundy: #e8a0a8;
       --ui-shadow: 0 1px 3px rgba(0, 12, 24, 0.55);
     }
-    .brand.on-light, .price-pill.on-light, nav.steps.on-light, aside.on-light, nav.views.on-light {
+    .brand.on-light, .price-pill.on-light, .config-tabs.on-light, aside.on-light, nav.views.on-light {
       --ui-ink: var(--ink);
       --ui-muted: var(--muted);
       --ui-navy: var(--navy);
@@ -185,12 +200,13 @@
       transform: translateX(-50%);
       width: max-content; max-width: calc(100vw - 40px);
       display: flex; justify-content: center; pointer-events: none;
-      overflow: hidden;
+      overflow: hidden; border-radius: var(--glass-r-pill);
     }
     nav.views {
       pointer-events: auto; width: max-content; max-width: 100%;
       display: flex; align-items: center; gap: 0;
-      padding: 4px 6px; border-radius: var(--glass-r-pill); overflow-x: auto; scrollbar-width: none;
+      padding: 4px 12px; border-radius: var(--glass-r-pill); overflow-x: auto; scrollbar-width: none;
+      scroll-padding-inline: 14px;
       -webkit-overflow-scrolling: touch;
     }
     .hint {
@@ -295,19 +311,23 @@
       color: rgba(255,255,255,.42);
     }
     .hint:hover .hint-dismiss { color: rgba(244, 239, 228, .78); }
-    aside {
-      position: fixed; z-index: 25; right: auto;
-      top: 50%; left: 22px; bottom: auto;
-      transform: translateY(-50%);
-      width: var(--side-w);
-      min-width: var(--side-w);
-      max-width: var(--side-w);
-      height: fit-content;
-      max-height: calc(100dvh - 120px - var(--safe-t) - var(--safe-b));
+    .config-dock aside {
+      position: absolute; z-index: 25;
+      top: calc(100% + 8px); left: 50%; right: auto; bottom: auto;
+      transform: translateX(-50%);
+      width: min(720px, calc(100vw - 32px));
+      min-width: 0; max-width: none;
+      height: auto; max-height: min(66dvh, 620px);
       border-radius: var(--glass-r-panel); display: flex; flex-direction: column; overflow: hidden;
       box-sizing: border-box;
+      opacity: 1; visibility: visible; pointer-events: auto;
+      transition: opacity .22s ease, transform .28s cubic-bezier(.22,.75,.22,1), visibility .22s;
+      transform-origin: top center;
     }
-    .sheet-toggle { display: none; }
+    .config-dock aside.collapsed {
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transform: translate(-50%, -8px) scale(.985);
+    }
     .aside-head { padding: 12px 12px 6px; }
     .aside-head .kicker { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; }
     .aside-head h2 { font-family: "Cormorant Garamond", serif; font-size: 22px; font-weight: 600; line-height: 1.08; }
@@ -349,7 +369,7 @@
       display: block; margin-top: 7px; font-size: 10px; line-height: 1.25;
     }
     .swatch.on small { font-weight: 500; }
-    .cards { display: grid; gap: 8px; }
+    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
     .card {
       appearance: none; width: 100%; text-align: left; cursor: pointer;
       padding: 9px 10px; border-radius: var(--glass-r-btn); color: inherit;
@@ -393,7 +413,7 @@
       mask-composite: exclude;
     }
     .ghost { flex: 0 0 auto; }
-    .go { flex: 1; }
+    .go { width: 100%; margin-top: 14px; }
     .go:hover, .ghost:hover { background: var(--glass-fill-on); }
     .go:active, .ghost:active { transform: scale(.985); }
     .go:disabled { opacity: .4; cursor: default; }
@@ -509,66 +529,33 @@
         row-gap: 14px;
     }
     .compact-ui .brand, .compact-ui .price-pill { width: auto; }
-    .compact-ui nav.steps { justify-self: center; width: max-content; max-width: 100%; }
+    .compact-ui .config-dock { width: min(760px, 100%); }
+    .compact-ui nav.steps { justify-content: flex-start; }
+    .compact-ui .step {
+      padding-inline: 6px; font-size: 8.5px; letter-spacing: .1em;
+    }
+    .compact-ui .view {
+      padding-inline: 8px; font-size: 9px; letter-spacing: .11em;
+    }
     .compact-ui .view-band {
+        left: calc(12px + env(safe-area-inset-left, 0px));
+        right: calc(104px + env(safe-area-inset-right, 0px));
+        transform: none; width: auto; max-width: none;
         bottom: calc(18px + var(--safe-b));
-        max-width: calc(100vw - 24px);
     }
-    .compact-ui aside {
-        top: auto; left: 14px; right: 14px; width: auto; min-width: 0; max-width: none;
-        bottom: calc(64px + var(--safe-b));
-        transform: none;
-        height: min(54dvh, 500px);
-        max-height: none;
-        transition: height .42s cubic-bezier(.22,.75,.22,1), box-shadow .3s ease;
-        will-change: height;
-    }
-    .compact-ui aside.collapsed {
-      height: 56px;
-      box-shadow: 0 8px 28px rgba(11,31,58,.18), var(--glass-inset);
-    }
-    .compact-ui aside.collapsed .aside-head,
-    .compact-ui aside.collapsed .hair,
-    .compact-ui aside.collapsed .aside-body,
-    .compact-ui aside.collapsed footer { opacity: 0; pointer-events: none; }
-    .sheet-toggle {
-      appearance: none; border: 0; width: 100%; min-height: 56px; padding: 0 14px;
-      background: transparent; color: var(--ui-ink); cursor: pointer;
-      align-items: center; gap: 11px; text-align: left; flex: 0 0 56px;
-      font-family: inherit; position: relative; z-index: 2;
-    }
-    .compact-ui .sheet-toggle { display: flex; }
-    .sheet-grip {
-      width: 34px; height: 4px; border-radius: 99px; flex: 0 0 auto;
-      background: rgba(255,255,255,.52); box-shadow: 0 1px 2px rgba(11,31,58,.15);
-    }
-    .sheet-copy { display: grid; gap: 1px; min-width: 0; flex: 1; }
-    .sheet-copy small { font-size: 8px; letter-spacing: .18em; text-transform: uppercase; color: var(--ui-muted); }
-    .sheet-copy strong { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .sheet-action {
-      display: flex; align-items: center; gap: 7px; flex: 0 0 auto;
-      font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--ui-muted);
-    }
-    .sheet-chevron {
-      width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.34); font-size: 13px;
-      transition: transform .3s ease;
-    }
-    aside:not(.collapsed) .sheet-chevron { transform: rotate(180deg); }
-    .compact-ui .aside-head,
-    .compact-ui .hair,
-    .compact-ui .aside-body,
-    .compact-ui aside footer { transition: opacity .18s ease; }
+    .compact-ui .config-dock aside { max-height: min(62dvh, 520px); }
     .compact-ui .frame { inset: 6px; }
     .compact-ui body.ready .hint { display: none !important; }
     .compact-ui .brand-mark {
-        right: 14px;
-        bottom: calc(72px + var(--safe-b));
-        width: min(112px, 30vw);
+        right: calc(14px + env(safe-area-inset-right, 0px));
+        bottom: calc(14px + var(--safe-b));
+        width: min(84px, 22vw);
     }
     @media (max-width: 520px) {
       .brand p { display: none; }
-      .step { padding: 8px 8px; font-size: 9px; }
+      .step { padding-block: 8px; }
+      .config-toggle { flex-basis: 42px; width: 42px; }
+      .cards { grid-template-columns: 1fr; }
     }
     @media (orientation: landscape) and (max-height: 600px) {
       .compact-ui header { top: calc(8px + var(--safe-t)); row-gap: 6px; }
@@ -576,11 +563,10 @@
       .compact-ui .brand h1 { font-size: 16px; }
       .compact-ui .price-pill strong { font-size: 16px; }
       .compact-ui nav.steps { padding-top: 2px; padding-bottom: 2px; }
-      .compact-ui aside { height: min(68dvh, 300px); }
-      .compact-ui aside.collapsed { height: 56px; }
+      .compact-ui .config-dock aside { max-height: min(54dvh, calc(100dvh - 112px - var(--safe-t))); }
       .touch-flight { right: calc(10px + env(safe-area-inset-right, 0px)); gap: 7px; }
       .touch-flight button { width: 42px; height: 42px; }
-      .touch-guide { bottom: calc(114px + var(--safe-b)); }
+      .touch-guide { bottom: calc(72px + var(--safe-b)); }
     }
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -634,7 +620,23 @@
         <p>Atelier configurator</p>
       </div>
     </div>
-    <nav class="steps glass" id="steps"></nav>
+    <div class="config-dock" id="configDock">
+      <div class="config-tabs glass">
+        <nav class="steps" id="steps" role="tablist" aria-label="Configuration sections"></nav>
+        <button class="config-toggle" id="panelToggle" type="button" aria-expanded="false" aria-controls="panel" aria-label="Open configuration options">
+          <span aria-hidden="true">⌄</span>
+        </button>
+      </div>
+      <aside class="glass collapsed" id="panel" aria-hidden="true">
+        <div class="aside-head">
+          <div class="kicker" id="kicker">01 — Packages</div>
+          <h2 id="title">A considered starting point</h2>
+          <p id="blurb">Four atelier compositions. Each can be refined in the next steps.</p>
+        </div>
+        <div class="hair"></div>
+        <div class="aside-body" id="body"></div>
+      </aside>
+    </div>
     <div class="price-pill glass">
       <span>Specification</span>
       <strong id="priceTop">€ 1.585.000</strong>
@@ -643,27 +645,6 @@
   <div class="view-band">
     <nav class="views glass" id="views"></nav>
   </div>
-  <aside class="glass" id="panel">
-    <button class="sheet-toggle" id="panelToggle" type="button" aria-expanded="true" aria-controls="body">
-      <span class="sheet-grip" aria-hidden="true"></span>
-      <span class="sheet-copy">
-        <small>Configuration</small>
-        <strong id="sheetTitle">01 · Packages</strong>
-      </span>
-      <span class="sheet-action"><span id="sheetAction">Close</span><span class="sheet-chevron" aria-hidden="true">⌄</span></span>
-    </button>
-    <div class="aside-head">
-      <div class="kicker" id="kicker">01 — Packages</div>
-      <h2 id="title">A considered starting point</h2>
-      <p id="blurb">Four atelier compositions. Each can be refined in the next steps.</p>
-    </div>
-    <div class="hair"></div>
-    <div class="aside-body" id="body"></div>
-    <footer class="bar">
-      <button class="ghost" id="back" type="button">Back</button>
-      <button class="go" id="next" type="button">Continue</button>
-    </footer>
-  </aside>
   <button type="button" class="hint glass" id="hint" aria-label="Hide movement controls">
     <div class="wasd" aria-hidden="true">
       <span></span><kbd>W</kbd><span></span>
@@ -1379,9 +1360,8 @@
         camera.updateProjectionMatrix();
         return;
       }
-      const panel = document.getElementById('panel');
       const frame = document.querySelector('.frame');
-      const leftEdge = panel ? panel.getBoundingClientRect().right : 274;
+      const leftEdge = frame ? frame.getBoundingClientRect().left : 10;
       const rightEdge = frame ? frame.getBoundingClientRect().right : w - 10;
       if (state.view === 'hero') {
         fitProfileStage(leftEdge, rightEdge, w, h);
@@ -2518,7 +2498,7 @@
     }
     function renderSteps() {
       document.getElementById('steps').innerHTML = STEPS.map((s, i) =>
-        `<button class="step ${i === state.step ? 'on' : ''}" data-i="${i}" type="button">${s.id}</button>`
+        `<button class="step ${i === state.step ? 'on' : ''}" data-i="${i}" type="button" role="tab" aria-selected="${i === state.step}" aria-controls="panel">${s.id}</button>`
       ).join('');
     }
     function renderViews() {
@@ -2527,9 +2507,11 @@
       const ordered = preferInt
         ? [...VIEWS.filter(v => v.kind === 'int'), ...VIEWS.filter(v => v.kind === 'ext')]
         : [...VIEWS.filter(v => v.kind === 'ext'), ...VIEWS.filter(v => v.kind === 'int')];
-      document.getElementById('views').innerHTML = ordered.map(v =>
+      const viewNav = document.getElementById('views');
+      viewNav.innerHTML = ordered.map(v =>
         `<button class="view ${state.view === v.id ? 'on' : ''}" data-view="${v.id}" type="button">${v.name}</button>`
       ).join('');
+      requestAnimationFrame(() => viewNav.querySelector('.view.on')?.scrollIntoView({ block: 'nearest', inline: 'center' }));
     }
     function specLines() {
       return [
@@ -2547,31 +2529,22 @@
     }
     const configPanel = document.getElementById('panel');
     const panelToggle = document.getElementById('panelToggle');
-    const sheetAction = document.getElementById('sheetAction');
-    let lastCompactLayout = isCompactLayout();
     function setPanelCollapsed(collapsed) {
-      const next = isCompactLayout() && collapsed;
-      configPanel.classList.toggle('collapsed', next);
-      panelToggle.setAttribute('aria-expanded', String(!next));
-      panelToggle.setAttribute('aria-label', next ? 'Open configuration options' : 'Collapse configuration options');
-      sheetAction.textContent = next ? 'Open' : 'Close';
-      configPanel.querySelector('.aside-head').inert = next;
-      configPanel.querySelector('.aside-body').inert = next;
-      configPanel.querySelector('footer').inert = next;
+      configPanel.classList.toggle('collapsed', collapsed);
+      configPanel.setAttribute('aria-hidden', String(collapsed));
+      configPanel.inert = collapsed;
+      panelToggle.setAttribute('aria-expanded', String(!collapsed));
+      panelToggle.setAttribute('aria-label', collapsed ? 'Open configuration options' : 'Collapse configuration options');
     }
     function syncPanelLayout(collapseForOrientation = false) {
       syncLayoutClasses();
-      const compact = isCompactLayout();
-      if (!compact) setPanelCollapsed(false);
-      else if (!lastCompactLayout || collapseForOrientation) setPanelCollapsed(true);
-      lastCompactLayout = compact;
+      if (collapseForOrientation) setPanelCollapsed(true);
     }
     function renderBody() {
       const s = STEPS[state.step];
       document.getElementById('kicker').textContent = s.kicker;
       document.getElementById('title').textContent = s.title;
       document.getElementById('blurb').textContent = s.blurb;
-      document.getElementById('sheetTitle').textContent = `${String(state.step + 1).padStart(2, '0')} · ${s.id}`;
       const el = document.getElementById('body');
       if (s.id === 'packages') {
         el.innerHTML = `<div class="cards">${PACKAGES.map(p =>
@@ -2596,13 +2569,10 @@
         el.innerHTML = `<ul class="spec">${specLines().map(([k, v, p]) =>
           `<li><span>${k}</span><b>${v}${p ? ' · ' + EUR(p) : ''}</b></li>`
         ).join('')}<li class="tot"><span>Total</span><b>${EUR(total())}</b></li></ul>
-        <p style="margin-top:12px;font-size:12px;color:var(--muted);">Base ABIM Classic 144 · ${EUR(BASE)}. Order confirms this composition.</p>`;
+        <p style="margin-top:12px;font-size:12px;color:var(--ui-muted);">Base ABIM Classic 144 · ${EUR(BASE)}. Order confirms this composition.</p>
+        <button class="go" data-order type="button" ${state.ordered ? 'disabled' : ''}>${state.ordered ? 'Ordered' : 'Order this configuration'}</button>`;
       }
       document.getElementById('priceTop').textContent = EUR(total());
-      document.getElementById('back').disabled = state.step === 0 || state.ordered;
-      const next = document.getElementById('next');
-      if (state.ordered) { next.textContent = 'Ordered'; next.disabled = true; }
-      else next.textContent = state.step === STEPS.length - 1 ? 'Order' : 'Continue';
       renderSteps();
     }
     function goStep(i) {
@@ -2614,20 +2584,18 @@
     applyPackage('midnight');
     renderBody();
     renderViews();
-    setPanelCollapsed(isCompactLayout());
+    setPanelCollapsed(true);
 
     panelToggle.addEventListener('click', () => {
       setPanelCollapsed(!configPanel.classList.contains('collapsed'));
     });
-    configPanel.addEventListener('transitionend', e => {
-      if (e.propertyName === 'height') composeView();
-    });
-
     document.getElementById('steps').addEventListener('click', e => {
       const b = e.target.closest('.step'); if (!b) return;
       if (state.ordered) return;
+      const sameStep = +b.dataset.i === state.step;
+      const wasOpen = !configPanel.classList.contains('collapsed');
       goStep(+b.dataset.i);
-      setPanelCollapsed(false);
+      setPanelCollapsed(sameStep && wasOpen);
     });
     document.getElementById('views').addEventListener('click', e => {
       const b = e.target.closest('[data-view]'); if (!b) return;
@@ -2638,6 +2606,8 @@
       document.getElementById('hint').classList.add('hidden');
     });
     document.getElementById('body').addEventListener('click', e => {
+      const order = e.target.closest('[data-order]');
+      if (order) { completeOrder(); return; }
       const pkg = e.target.closest('[data-pkg]');
       if (pkg) { applyPackage(pkg.dataset.pkg); rebuildShared(); renderBody(); return; }
       const b = e.target.closest('[data-key]');
@@ -2646,17 +2616,15 @@
       rebuildShared();
       renderBody();
     });
-    document.getElementById('back').addEventListener('click', () => { if (!state.ordered) goStep(state.step - 1); });
-    document.getElementById('next').addEventListener('click', () => {
+    function completeOrder() {
       if (state.ordered) return;
-      if (state.step < STEPS.length - 1) { goStep(state.step + 1); return; }
       state.ordered = true;
       document.getElementById('modalSpec').innerHTML = specLines().map(([k, v]) =>
         `<li><span>${k}</span><b>${v}</b></li>`
       ).join('') + `<li class="tot"><span>Total</span><b>${EUR(total())}</b></li>`;
       document.getElementById('modal').classList.add('on');
       renderBody();
-    });
+    }
     document.getElementById('modal').addEventListener('click', e => {
       if (e.target.id === 'modal') document.getElementById('modal').classList.remove('on');
     });
@@ -2879,7 +2847,7 @@
     let _contrastT = 0;
     const contrastTargets = () => [
       document.querySelector('.brand'),
-      document.getElementById('steps'),
+      document.querySelector('.config-tabs'),
       document.querySelector('.price-pill'),
       document.getElementById('panel'),
       viewsNav
