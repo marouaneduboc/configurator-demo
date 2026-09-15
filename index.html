@@ -215,11 +215,9 @@
     }
     body.ready .hint { display: flex; animation: hintIn .55s ease .35s both; }
     body.ready .hint.hidden { display: none; }
-    @media (pointer: coarse) {
-      body.ready .hint { display: none; }
-    }
+    .touch-capable body.ready .hint { display: none; }
     .touch-nav {
-      position: fixed; inset: 0; z-index: 4; display: none;
+      position: fixed; inset: 0; z-index: 4; display: none; pointer-events: none;
       touch-action: none; overscroll-behavior: none;
     }
     .touch-joystick {
@@ -241,8 +239,8 @@
     }
     .touch-flight {
       position: fixed; right: calc(16px + env(safe-area-inset-right, 0px));
-      top: max(132px, calc(104px + var(--safe-t))); z-index: 5;
-      display: none; flex-direction: column; gap: 10px;
+      top: 50%; transform: translateY(-50%); z-index: 5;
+      display: none; flex-direction: column; gap: 10px; pointer-events: auto;
     }
     .touch-flight button {
       width: 48px; height: 48px; border-radius: 50%;
@@ -254,7 +252,7 @@
     }
     .touch-flight button:active, .touch-flight button.pressed { background: rgba(197,164,110,.48); }
     .touch-guide {
-      position: fixed; left: 50%; top: calc(132px + var(--safe-t));
+      position: fixed; left: 50%; top: auto; bottom: calc(132px + var(--safe-b));
       transform: translateX(-50%); z-index: 5;
       display: none; padding: 7px 11px; border-radius: 999px;
       color: rgba(255,255,255,.8); background: rgba(8,24,40,.18);
@@ -264,11 +262,9 @@
       transition: opacity .35s ease;
     }
     .touch-nav.used .touch-guide { opacity: 0; }
-    @media (pointer: coarse) {
-      body.ready .touch-nav { display: block; }
-      body.ready .touch-flight { display: flex; }
-      body.ready .touch-guide { display: block; }
-    }
+    .touch-capable body.ready .touch-nav { display: block; }
+    .touch-capable body.ready .touch-flight { display: flex; }
+    .touch-capable body.ready .touch-guide { display: block; }
     @keyframes hintIn {
       from { opacity: 0; transform: translateY(-50%) translateX(12px); }
       to { opacity: 1; transform: translateY(-50%) translateX(0); }
@@ -311,6 +307,7 @@
       border-radius: var(--glass-r-panel); display: flex; flex-direction: column; overflow: hidden;
       box-sizing: border-box;
     }
+    .sheet-toggle { display: none; }
     .aside-head { padding: 12px 12px 6px; }
     .aside-head .kicker { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; }
     .aside-head h2 { font-family: "Cormorant Garamond", serif; font-size: 22px; font-weight: 600; line-height: 1.08; }
@@ -503,41 +500,87 @@
       margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--gold);
       font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--green);
     }
-    .handle { display: none; width: 42px; height: 4px; border-radius: 4px; background: rgba(11,31,58,.2); margin: 8px auto 0; }
-    @media (max-width: 900px) {
-      header {
+    .compact-ui header {
         left: 12px; right: 12px;
         grid-template-columns: 1fr auto;
         grid-template-areas:
           "brand price"
           "steps steps";
         row-gap: 14px;
-      }
-      .brand, .price-pill { width: auto; }
-      nav.steps { justify-self: center; width: max-content; max-width: 100%; }
-      .view-band {
+    }
+    .compact-ui .brand, .compact-ui .price-pill { width: auto; }
+    .compact-ui nav.steps { justify-self: center; width: max-content; max-width: 100%; }
+    .compact-ui .view-band {
         bottom: calc(18px + var(--safe-b));
         max-width: calc(100vw - 24px);
-      }
-      aside {
+    }
+    .compact-ui aside {
         top: auto; left: 14px; right: 14px; width: auto; min-width: 0; max-width: none;
         bottom: calc(64px + var(--safe-b));
         transform: none;
-        height: auto;
-        max-height: min(42vh, 420px);
-      }
-      .handle { display: block; }
-      .frame { inset: 6px; }
-      body.ready .hint { display: none !important; }
-      .brand-mark {
+        height: min(54dvh, 500px);
+        max-height: none;
+        transition: height .42s cubic-bezier(.22,.75,.22,1), box-shadow .3s ease;
+        will-change: height;
+    }
+    .compact-ui aside.collapsed {
+      height: 56px;
+      box-shadow: 0 8px 28px rgba(11,31,58,.18), var(--glass-inset);
+    }
+    .compact-ui aside.collapsed .aside-head,
+    .compact-ui aside.collapsed .hair,
+    .compact-ui aside.collapsed .aside-body,
+    .compact-ui aside.collapsed footer { opacity: 0; pointer-events: none; }
+    .sheet-toggle {
+      appearance: none; border: 0; width: 100%; min-height: 56px; padding: 0 14px;
+      background: transparent; color: var(--ui-ink); cursor: pointer;
+      align-items: center; gap: 11px; text-align: left; flex: 0 0 56px;
+      font-family: inherit; position: relative; z-index: 2;
+    }
+    .compact-ui .sheet-toggle { display: flex; }
+    .sheet-grip {
+      width: 34px; height: 4px; border-radius: 99px; flex: 0 0 auto;
+      background: rgba(255,255,255,.52); box-shadow: 0 1px 2px rgba(11,31,58,.15);
+    }
+    .sheet-copy { display: grid; gap: 1px; min-width: 0; flex: 1; }
+    .sheet-copy small { font-size: 8px; letter-spacing: .18em; text-transform: uppercase; color: var(--ui-muted); }
+    .sheet-copy strong { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sheet-action {
+      display: flex; align-items: center; gap: 7px; flex: 0 0 auto;
+      font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--ui-muted);
+    }
+    .sheet-chevron {
+      width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.34); font-size: 13px;
+      transition: transform .3s ease;
+    }
+    aside:not(.collapsed) .sheet-chevron { transform: rotate(180deg); }
+    .compact-ui .aside-head,
+    .compact-ui .hair,
+    .compact-ui .aside-body,
+    .compact-ui aside footer { transition: opacity .18s ease; }
+    .compact-ui .frame { inset: 6px; }
+    .compact-ui body.ready .hint { display: none !important; }
+    .compact-ui .brand-mark {
         right: 14px;
         bottom: calc(72px + var(--safe-b));
         width: min(112px, 30vw);
-      }
     }
     @media (max-width: 520px) {
       .brand p { display: none; }
       .step { padding: 8px 8px; font-size: 9px; }
+    }
+    @media (orientation: landscape) and (max-height: 600px) {
+      .compact-ui header { top: calc(8px + var(--safe-t)); row-gap: 6px; }
+      .compact-ui .brand, .compact-ui .price-pill { padding-top: 6px; padding-bottom: 6px; }
+      .compact-ui .brand h1 { font-size: 16px; }
+      .compact-ui .price-pill strong { font-size: 16px; }
+      .compact-ui nav.steps { padding-top: 2px; padding-bottom: 2px; }
+      .compact-ui aside { height: min(68dvh, 300px); }
+      .compact-ui aside.collapsed { height: 56px; }
+      .touch-flight { right: calc(10px + env(safe-area-inset-right, 0px)); gap: 7px; }
+      .touch-flight button { width: 42px; height: 42px; }
+      .touch-guide { bottom: calc(114px + var(--safe-b)); }
     }
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -601,7 +644,14 @@
     <nav class="views glass" id="views"></nav>
   </div>
   <aside class="glass" id="panel">
-    <div class="handle"></div>
+    <button class="sheet-toggle" id="panelToggle" type="button" aria-expanded="true" aria-controls="body">
+      <span class="sheet-grip" aria-hidden="true"></span>
+      <span class="sheet-copy">
+        <small>Configuration</small>
+        <strong id="sheetTitle">01 · Packages</strong>
+      </span>
+      <span class="sheet-action"><span id="sheetAction">Close</span><span class="sheet-chevron" aria-hidden="true">⌄</span></span>
+    </button>
     <div class="aside-head">
       <div class="kicker" id="kicker">01 — Packages</div>
       <h2 id="title">A considered starting point</h2>
@@ -655,7 +705,14 @@
     window.addEventListener('error', e => { window.__dbg.pageError = e.message; });
     const EUR = n => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
     const coarsePointer = matchMedia('(pointer: coarse)').matches;
-    const mobile = matchMedia('(max-width: 900px)').matches || coarsePointer;
+    const touchCapable = navigator.maxTouchPoints > 0 || coarsePointer || 'ontouchstart' in window;
+    const isCompactLayout = () => innerWidth <= 1100 || (touchCapable && innerWidth <= 1400);
+    const syncLayoutClasses = () => {
+      document.documentElement.classList.toggle('touch-capable', touchCapable);
+      document.documentElement.classList.toggle('compact-ui', isCompactLayout());
+    };
+    syncLayoutClasses();
+    const mobile = isCompactLayout() || touchCapable;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const canvas = document.getElementById('c');
 
@@ -1317,7 +1374,7 @@
       camera.aspect = w / h;
       renderer.setSize(w, h);
       const interior = state.view === 'salon' || state.view === 'galley' || state.view === 'cabin' || state.view === 'master' || state.view === 'bridge';
-      if (w <= 900 || interior || !yacht || !bbox || bbox.isEmpty()) {
+      if (isCompactLayout() || interior || !yacht || !bbox || bbox.isEmpty()) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
         return;
@@ -2488,11 +2545,33 @@
         ['Antifouling', find(ANTIS, state.anti).name, find(ANTIS, state.anti).price]
       ];
     }
+    const configPanel = document.getElementById('panel');
+    const panelToggle = document.getElementById('panelToggle');
+    const sheetAction = document.getElementById('sheetAction');
+    let lastCompactLayout = isCompactLayout();
+    function setPanelCollapsed(collapsed) {
+      const next = isCompactLayout() && collapsed;
+      configPanel.classList.toggle('collapsed', next);
+      panelToggle.setAttribute('aria-expanded', String(!next));
+      panelToggle.setAttribute('aria-label', next ? 'Open configuration options' : 'Collapse configuration options');
+      sheetAction.textContent = next ? 'Open' : 'Close';
+      configPanel.querySelector('.aside-head').inert = next;
+      configPanel.querySelector('.aside-body').inert = next;
+      configPanel.querySelector('footer').inert = next;
+    }
+    function syncPanelLayout(collapseForOrientation = false) {
+      syncLayoutClasses();
+      const compact = isCompactLayout();
+      if (!compact) setPanelCollapsed(false);
+      else if (!lastCompactLayout || collapseForOrientation) setPanelCollapsed(true);
+      lastCompactLayout = compact;
+    }
     function renderBody() {
       const s = STEPS[state.step];
       document.getElementById('kicker').textContent = s.kicker;
       document.getElementById('title').textContent = s.title;
       document.getElementById('blurb').textContent = s.blurb;
+      document.getElementById('sheetTitle').textContent = `${String(state.step + 1).padStart(2, '0')} · ${s.id}`;
       const el = document.getElementById('body');
       if (s.id === 'packages') {
         el.innerHTML = `<div class="cards">${PACKAGES.map(p =>
@@ -2535,15 +2614,25 @@
     applyPackage('midnight');
     renderBody();
     renderViews();
+    setPanelCollapsed(isCompactLayout());
+
+    panelToggle.addEventListener('click', () => {
+      setPanelCollapsed(!configPanel.classList.contains('collapsed'));
+    });
+    configPanel.addEventListener('transitionend', e => {
+      if (e.propertyName === 'height') composeView();
+    });
 
     document.getElementById('steps').addEventListener('click', e => {
       const b = e.target.closest('.step'); if (!b) return;
       if (state.ordered) return;
       goStep(+b.dataset.i);
+      setPanelCollapsed(false);
     });
     document.getElementById('views').addEventListener('click', e => {
       const b = e.target.closest('[data-view]'); if (!b) return;
       controls.autoRotate = false; flyTo(b.dataset.view);
+      setPanelCollapsed(true);
     });
     document.getElementById('hint')?.addEventListener('click', () => {
       document.getElementById('hint').classList.add('hidden');
@@ -2600,6 +2689,8 @@
       if (cat === 'hull' || cat === 'super' || cat === 'roof' || cat === 'anti') goStep(1);
       else if (cat === 'textile' || cat === 'wood') goStep(2);
       else if (cat === 'deck' || cat === 'metal') goStep(3);
+      else return;
+      setPanelCollapsed(false);
     }
     canvas.addEventListener('click', ev => {
       selectModelAt(ev.clientX, ev.clientY);
@@ -2620,8 +2711,8 @@
       touchLook.pitch = touchLook.targetPitch = Math.asin(THREE.MathUtils.clamp(_lookDirection.y, -1, 1));
       touchLook.distance = Math.max(0.5, camera.position.distanceTo(controls.target));
     }
-    touchNav.addEventListener('pointerdown', e => {
-      if (e.pointerType !== 'touch' || state.ordered || e.target.closest('.touch-flight')) return;
+    canvas.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'touch' || state.ordered) return;
       beginFirstPersonInput();
       if (e.clientX < innerWidth * 0.45 && touchMove.pointerId == null) {
         touchMove.pointerId = e.pointerId;
@@ -2640,10 +2731,11 @@
       } else {
         return;
       }
-      touchNav.setPointerCapture(e.pointerId);
+      canvas.setPointerCapture(e.pointerId);
+      e.stopImmediatePropagation();
       e.preventDefault();
-    });
-    touchNav.addEventListener('pointermove', e => {
+    }, { capture: true });
+    canvas.addEventListener('pointermove', e => {
       if (e.pointerId === touchMove.pointerId) {
         touchMove.x = THREE.MathUtils.clamp((e.clientX - touchMove.startX) / 52, -1, 1);
         touchMove.z = THREE.MathUtils.clamp((touchMove.startY - e.clientY) / 52, -1, 1);
@@ -2658,8 +2750,9 @@
         touchLook.targetPitch = THREE.MathUtils.clamp(touchLook.targetPitch - dy * 0.0025, -1.49, 1.49);
         touchLook.moved ||= Math.hypot(e.clientX - touchLook.downX, e.clientY - touchLook.downY) > 7;
         e.preventDefault();
-      }
-    });
+      } else return;
+      e.stopImmediatePropagation();
+    }, { capture: true });
     function endTouchPointer(e) {
       if (e.pointerId === touchMove.pointerId) {
         touchMove.pointerId = null;
@@ -2674,8 +2767,25 @@
         if (wasTap) selectModelAt(x, y);
       }
     }
-    touchNav.addEventListener('pointerup', endTouchPointer);
-    touchNav.addEventListener('pointercancel', endTouchPointer);
+    function resetTouchControls() {
+      touchMove.pointerId = null;
+      touchMove.x = touchMove.y = touchMove.z = 0;
+      touchLook.pointerId = null;
+      touchJoystick.classList.remove('active');
+      touchKnob.style.transform = '';
+      document.querySelectorAll('.touch-flight button').forEach(button => button.classList.remove('pressed'));
+    }
+    canvas.addEventListener('pointerup', e => {
+      if (e.pointerId !== touchMove.pointerId && e.pointerId !== touchLook.pointerId) return;
+      endTouchPointer(e);
+      e.stopImmediatePropagation();
+      e.preventDefault();
+    }, { capture: true });
+    canvas.addEventListener('pointercancel', e => {
+      if (e.pointerId !== touchMove.pointerId && e.pointerId !== touchLook.pointerId) return;
+      endTouchPointer(e);
+      e.stopImmediatePropagation();
+    }, { capture: true });
 
     function bindTouchHold(id, value) {
       const button = document.getElementById(id);
@@ -2734,8 +2844,35 @@
     addEventListener('keyup', e => {
       keys[e.code] = false;
     });
-    addEventListener('blur', () => { for (const k of Object.keys(keys)) keys[k] = false; });
-    addEventListener('resize', composeView);
+    addEventListener('blur', () => {
+      for (const k of Object.keys(keys)) keys[k] = false;
+      resetTouchControls();
+    });
+    let viewportFrame = 0;
+    let viewportSettleTimer = 0;
+    let lastOrientation = innerWidth >= innerHeight ? 'landscape' : 'portrait';
+    function applyViewportRefresh() {
+      const orientation = innerWidth >= innerHeight ? 'landscape' : 'portrait';
+      const orientationChanged = orientation !== lastOrientation;
+      lastOrientation = orientation;
+      if (orientationChanged) resetTouchControls();
+      syncPanelLayout(orientationChanged);
+      composeView();
+    }
+    function scheduleViewportRefresh() {
+      cancelAnimationFrame(viewportFrame);
+      clearTimeout(viewportSettleTimer);
+      viewportFrame = requestAnimationFrame(() => {
+        viewportFrame = requestAnimationFrame(applyViewportRefresh);
+      });
+      viewportSettleTimer = setTimeout(applyViewportRefresh, 260);
+    }
+    addEventListener('resize', scheduleViewportRefresh, { passive: true });
+    addEventListener('orientationchange', scheduleViewportRefresh, { passive: true });
+    addEventListener('pageshow', scheduleViewportRefresh, { passive: true });
+    visualViewport?.addEventListener('resize', scheduleViewportRefresh, { passive: true });
+    screen.orientation?.addEventListener?.('change', scheduleViewportRefresh);
+    new ResizeObserver(scheduleViewportRefresh).observe(document.documentElement);
 
     const viewsNav = document.getElementById('views');
     const _px = new Uint8Array(4);
