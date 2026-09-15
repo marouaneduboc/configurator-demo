@@ -81,18 +81,6 @@
       mask-composite: exclude;
     }
     aside.glass, .hint.glass { position: fixed; }
-    footer.bar {
-      position: relative; z-index: 1; left: auto; right: auto; bottom: auto;
-      width: auto; max-width: none;
-      margin: 0 8px 8px;
-      display: flex; align-items: center; gap: 8px; padding: 0;
-      border-radius: 0;
-      background: none; border: 0; box-shadow: none;
-      backdrop-filter: none; -webkit-backdrop-filter: none;
-      box-sizing: border-box;
-      flex-shrink: 0;
-    }
-    footer.bar::after { display: none; }
     header {
       position: fixed; top: calc(18px + var(--safe-t)); left: 22px; right: 22px;
       z-index: 20; display: grid;
@@ -134,7 +122,7 @@
       appearance: none; flex: 0 0 46px; width: 46px; min-height: 42px;
       display: grid; place-items: center; cursor: pointer;
       color: var(--ui-muted); background: transparent;
-      border: 0; border-left: 1px solid rgba(255,255,255,.24);
+      border: 0;
     }
     .config-toggle span { font-size: 16px; transition: transform .28s ease; }
     .config-toggle[aria-expanded="true"] span { transform: rotate(180deg); }
@@ -144,6 +132,8 @@
       padding: 8px 10px; font-size: 10px; letter-spacing: .14em;
       text-transform: uppercase; white-space: nowrap; position: relative; flex-shrink: 0;
     }
+    .view { transition: opacity .14s ease; }
+    .view.edge-clipped { opacity: 0; pointer-events: none; }
     .step.on::after, .view.on::after {
       content: ""; position: absolute; left: 14px; right: 14px; bottom: 5px; height: 1px;
       background: var(--gold);
@@ -153,7 +143,7 @@
       default = light type over dark water/sky; .on-light = dark type over bright backdrop.
       Accent hues (green / burgundy / gold / navy) are preserved, only luminance flips.
     */
-    .brand, .price-pill, .config-tabs, aside, nav.views {
+    .brand, .price-pill, .config-tabs, aside, .view-band {
       --ui-ink: #ffffff;
       --ui-muted: rgba(255, 255, 255, 0.68);
       --ui-navy: #f4f7fb;
@@ -161,7 +151,7 @@
       --ui-burgundy: #e8a0a8;
       --ui-shadow: 0 1px 3px rgba(0, 12, 24, 0.55);
     }
-    .brand.on-light, .price-pill.on-light, .config-tabs.on-light, aside.on-light, nav.views.on-light {
+    .brand.on-light, .price-pill.on-light, .config-tabs.on-light, aside.on-light, .view-band.on-light {
       --ui-ink: var(--ink);
       --ui-muted: var(--muted);
       --ui-navy: var(--navy);
@@ -170,7 +160,7 @@
       --ui-shadow: none;
     }
     .brand h1, .price-pill strong, .aside-head h2, .block h3, .card b, .spec .tot,
-    .step.on, .view.on, .swatch.on small, .ghost, .go {
+    .step.on, .view.on, .swatch.on small, .go {
       color: var(--ui-ink);
       text-shadow: var(--ui-shadow);
     }
@@ -199,14 +189,14 @@
       bottom: calc(18px + var(--safe-b));
       transform: translateX(-50%);
       width: max-content; max-width: calc(100vw - 40px);
-      display: flex; justify-content: center; pointer-events: none;
-      overflow: hidden; border-radius: var(--glass-r-pill);
+      display: flex; justify-content: center; pointer-events: auto;
+      overflow: hidden; border-radius: var(--glass-r-pill); padding: 0 14px;
     }
     nav.views {
-      pointer-events: auto; width: max-content; max-width: 100%;
+      pointer-events: auto; width: max-content; max-width: 100%; min-width: 0;
       display: flex; align-items: center; gap: 0;
-      padding: 4px 12px; border-radius: var(--glass-r-pill); overflow-x: auto; scrollbar-width: none;
-      scroll-padding-inline: 14px;
+      padding: 4px 0; overflow-x: auto; scrollbar-width: none;
+      scroll-padding-inline: 12px;
       -webkit-overflow-scrolling: touch;
     }
     .hint {
@@ -392,7 +382,7 @@
       padding: 10px 0; font-size: 13px; border-bottom: 1px solid rgba(197,164,110,.35);
     }
     .spec .tot { font-family: "Cormorant Garamond", serif; font-size: 22px; border-bottom: 0; padding-top: 14px; }
-    .ghost, .go {
+    .go {
       appearance: none; cursor: pointer;
       border-radius: var(--glass-r-btn); min-height: 44px; padding: 0 14px;
       font-size: 11px; letter-spacing: .16em; text-transform: uppercase; font-weight: 600;
@@ -403,7 +393,7 @@
       -webkit-backdrop-filter: none;
       position: relative;
     }
-    .ghost::after, .go::after {
+    .go::after {
       content: "";
       position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
       padding: var(--glass-stroke-w);
@@ -412,13 +402,12 @@
       -webkit-mask-composite: xor;
       mask-composite: exclude;
     }
-    .ghost { flex: 0 0 auto; }
     .go { width: 100%; margin-top: 14px; }
-    .go:hover, .ghost:hover { background: var(--glass-fill-on); }
-    .go:active, .ghost:active { transform: scale(.985); }
+    .go:hover { background: var(--glass-fill-on); }
+    .go:active { transform: scale(.985); }
     .go:disabled { opacity: .4; cursor: default; }
     /* Buttons outside a frosted parent still get full glass */
-    .ghost.glass, .go.glass {
+    .go.glass {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
       -webkit-backdrop-filter: var(--glass-blur);
@@ -540,7 +529,7 @@
     .compact-ui .view-band {
         left: calc(12px + env(safe-area-inset-left, 0px));
         right: calc(104px + env(safe-area-inset-right, 0px));
-        transform: none; width: auto; max-width: none;
+        transform: none; width: auto; max-width: none; padding-inline: 16px;
         bottom: calc(18px + var(--safe-b));
     }
     .compact-ui .config-dock aside { max-height: min(62dvh, 520px); }
@@ -642,8 +631,8 @@
       <strong id="priceTop">€ 1.585.000</strong>
     </div>
   </header>
-  <div class="view-band">
-    <nav class="views glass" id="views"></nav>
+  <div class="view-band glass">
+    <nav class="views" id="views"></nav>
   </div>
   <button type="button" class="hint glass" id="hint" aria-label="Hide movement controls">
     <div class="wasd" aria-hidden="true">
@@ -2511,7 +2500,19 @@
       viewNav.innerHTML = ordered.map(v =>
         `<button class="view ${state.view === v.id ? 'on' : ''}" data-view="${v.id}" type="button">${v.name}</button>`
       ).join('');
-      requestAnimationFrame(() => viewNav.querySelector('.view.on')?.scrollIntoView({ block: 'nearest', inline: 'center' }));
+      requestAnimationFrame(() => {
+        viewNav.querySelector('.view.on')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        requestAnimationFrame(() => updateViewEdgeVisibility(viewNav));
+      });
+    }
+    function updateViewEdgeVisibility(viewNav) {
+      if (!viewNav) return;
+      const edge = viewNav.getBoundingClientRect();
+      viewNav.querySelectorAll('.view').forEach(button => {
+        const rect = button.getBoundingClientRect();
+        const fullyVisible = rect.left >= edge.left - .5 && rect.right <= edge.right + .5;
+        button.classList.toggle('edge-clipped', !fullyVisible);
+      });
     }
     function specLines() {
       return [
@@ -2602,6 +2603,12 @@
       controls.autoRotate = false; flyTo(b.dataset.view);
       setPanelCollapsed(true);
     });
+    let viewEdgeFrame = 0;
+    document.getElementById('views').addEventListener('scroll', e => {
+      const viewNav = e.currentTarget;
+      cancelAnimationFrame(viewEdgeFrame);
+      viewEdgeFrame = requestAnimationFrame(() => updateViewEdgeVisibility(viewNav));
+    }, { passive: true });
     document.getElementById('hint')?.addEventListener('click', () => {
       document.getElementById('hint').classList.add('hidden');
     });
@@ -2843,6 +2850,7 @@
     new ResizeObserver(scheduleViewportRefresh).observe(document.documentElement);
 
     const viewsNav = document.getElementById('views');
+    const viewsBand = document.querySelector('.view-band');
     const _px = new Uint8Array(4);
     let _contrastT = 0;
     const contrastTargets = () => [
@@ -2850,7 +2858,7 @@
       document.querySelector('.config-tabs'),
       document.querySelector('.price-pill'),
       document.getElementById('panel'),
-      viewsNav
+      viewsBand
     ].filter(Boolean);
     function sampleLuminance(rect, points) {
       const gl = renderer.getContext();
@@ -2872,11 +2880,11 @@
       if (!renderer) return;
       for (const el of contrastTargets()) {
         const rect = el.getBoundingClientRect();
-        const lum = sampleLuminance(rect, el === viewsNav
+        const lum = sampleLuminance(rect, el === viewsBand
           ? [[0.2, 0.5], [0.5, 0.5], [0.8, 0.5]]
           : [[0.5, 0.35], [0.5, 0.65]]);
         if (lum == null) continue;
-        el.classList.toggle('on-light', lum > (el.id === 'views' || el.classList.contains('views') ? 0.58 : 0.7));
+        el.classList.toggle('on-light', lum > (el === viewsBand ? 0.58 : 0.7));
       }
     }
 
