@@ -82,60 +82,61 @@
     }
     aside.glass, .hint.glass { position: fixed; }
     header {
-      position: fixed; top: calc(18px + var(--safe-t)); left: 22px; right: 22px;
-      z-index: 20; display: grid;
-      grid-template-columns: var(--side-w) 1fr var(--side-w);
-      grid-template-areas: "brand steps price";
-      align-items: center; column-gap: 16px; row-gap: 0;
+      position: fixed; top: calc(12px + var(--safe-t));
+      left: calc(16px + env(safe-area-inset-left, 0px));
+      right: calc(16px + env(safe-area-inset-right, 0px));
+      z-index: 20; display: flex;
+      justify-content: space-between; align-items: center;
+      gap: 10px; pointer-events: none;
     }
+    header > * { pointer-events: auto; }
     .brand {
-      grid-area: brand;
-      display: flex; align-items: center; gap: 12px; padding: 9px 14px;
-      border-radius: var(--glass-r-panel);
-      flex-shrink: 0; justify-self: start;
-      width: var(--side-w); box-sizing: border-box;
+      display: flex; align-items: center; gap: 10px; padding: 6px 12px;
+      border-radius: var(--glass-r-pill);
+      flex-shrink: 0; width: max-content; box-sizing: border-box;
     }
     .mark {
-      width: 26px; height: 26px; border-radius: 50%;
+      width: 22px; height: 22px; border-radius: 50%;
       border: 1px solid rgba(197,164,110,.7);
       display: grid; place-items: center;
-      font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 12px;
-      letter-spacing: .08em;
+      font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 11px;
+      letter-spacing: .08em; flex-shrink: 0;
     }
-    .brand h1 { font-family: "Cormorant Garamond", serif; font-size: 19px; font-weight: 600; line-height: 1; letter-spacing: .06em; }
-    .brand p { font-size: 9px; letter-spacing: .24em; text-transform: uppercase; margin-top: 3px; }
+    .brand h1 { font-family: "Cormorant Garamond", serif; font-size: 16px; font-weight: 600; line-height: 1.1; letter-spacing: .04em; white-space: nowrap; }
+    .brand p { font-size: 8.5px; letter-spacing: .2em; text-transform: uppercase; margin-top: 2px; white-space: nowrap; }
     .config-dock {
-      grid-area: steps; position: relative; z-index: 30;
-      width: min(760px, 100%); justify-self: center;
+      position: relative; z-index: 30;
+      width: max-content; max-width: 100%;
+      display: flex; justify-content: center;
+      flex: 0 1 auto; margin: 0 auto;
     }
     .config-tabs {
-      display: flex; align-items: stretch; width: 100%;
-      border-radius: var(--glass-r-pill); overflow: hidden;
+      display: inline-flex; align-items: center; width: max-content; max-width: 100%;
+      border-radius: var(--glass-r-pill); overflow: hidden; padding: 3px 5px;
     }
     nav.steps {
-      display: flex; align-items: center; justify-content: center; gap: 0;
-      padding: 4px 10px; overflow-x: auto; scrollbar-width: none;
-      min-width: 0; flex: 1 1 auto;
-      scroll-padding-inline: 12px; -webkit-overflow-scrolling: touch;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0;
+      padding: 0; overflow-x: auto; scrollbar-width: none;
+      min-width: 0; flex: 0 1 auto;
+      scroll-padding-inline: 8px; -webkit-overflow-scrolling: touch;
     }
     .config-toggle {
-      appearance: none; flex: 0 0 46px; width: 46px; min-height: 42px;
+      appearance: none; flex: 0 0 28px; width: 28px; height: 28px; min-height: 28px;
       display: grid; place-items: center; cursor: pointer;
       color: var(--ui-muted); background: transparent;
-      border: 0;
+      border: 0; margin-left: 2px;
     }
-    .config-toggle span { font-size: 16px; transition: transform .28s ease; }
+    .config-toggle span { font-size: 14px; transition: transform .28s ease; }
     .config-toggle[aria-expanded="true"] span { transform: rotate(180deg); }
     nav.steps::-webkit-scrollbar, nav.views::-webkit-scrollbar { display: none; }
     .step, .view {
       appearance: none; border: 0; background: transparent; cursor: pointer;
-      padding: 8px 10px; font-size: 10px; letter-spacing: .14em;
+      padding: 6px 9px; font-size: 9.5px; letter-spacing: .12em;
       text-transform: uppercase; white-space: nowrap; position: relative; flex-shrink: 0;
     }
-    .view { transition: opacity .14s ease; }
-    .view.edge-clipped { opacity: 0; pointer-events: none; }
+    .view { transition: color .14s ease; }
     .step.on::after, .view.on::after {
-      content: ""; position: absolute; left: 14px; right: 14px; bottom: 5px; height: 1px;
+      content: ""; position: absolute; left: 8px; right: 8px; bottom: 3px; height: 1.5px;
       background: var(--gold);
     }
     /*
@@ -176,27 +177,26 @@
     .mark { color: var(--ui-navy); }
     .brand.on-light .mark, aside.on-light .mark { color: var(--navy); }
     .price-pill {
-      grid-area: price;
-      padding: 8px 14px; border-radius: var(--glass-r-panel); text-align: right;
-      flex-shrink: 0; justify-self: end;
-      width: var(--side-w); box-sizing: border-box;
+      padding: 6px 12px; border-radius: var(--glass-r-pill); text-align: right;
+      flex-shrink: 0; width: max-content; box-sizing: border-box;
     }
-    .price-pill span { display: block; font-size: 9px; letter-spacing: .22em; text-transform: uppercase; }
-    .price-pill strong { font-family: "Cormorant Garamond", serif; font-size: 20px; font-weight: 600; }
+    .price-pill span { display: block; font-size: 8px; letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; }
+    .price-pill strong { font-family: "Cormorant Garamond", serif; font-size: 16px; font-weight: 600; line-height: 1.1; white-space: nowrap; }
     .view-band {
       position: fixed; z-index: 22;
       top: auto; left: 50%; right: auto;
-      bottom: calc(18px + var(--safe-b));
+      bottom: calc(14px + var(--safe-b));
       transform: translateX(-50%);
-      width: max-content; max-width: calc(100vw - 40px);
-      display: flex; justify-content: center; pointer-events: auto;
-      overflow: hidden; border-radius: var(--glass-r-pill); padding: 0 14px;
+      width: max-content; max-width: calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+      display: inline-flex; justify-content: center; align-items: center; pointer-events: auto;
+      overflow: hidden; border-radius: var(--glass-r-pill); padding: 3px 6px;
+      box-sizing: border-box;
     }
     nav.views {
       pointer-events: auto; width: max-content; max-width: 100%; min-width: 0;
-      display: flex; align-items: center; gap: 0;
-      padding: 4px 0; overflow-x: auto; scrollbar-width: none;
-      scroll-padding-inline: 12px;
+      display: inline-flex; align-items: center; gap: 0;
+      padding: 0; overflow-x: auto; scrollbar-width: none;
+      scroll-padding-inline: 8px;
       -webkit-overflow-scrolling: touch;
     }
     .hint {
@@ -464,8 +464,8 @@
       position: fixed;
       z-index: 55;
       right: calc(22px + env(safe-area-inset-right, 0px));
-      bottom: calc(22px + var(--safe-b));
-      width: min(160px, 30vw);
+      bottom: calc(18px + var(--safe-b));
+      width: min(120px, 16vw);
       height: auto;
       pointer-events: none;
       opacity: 1;
@@ -509,53 +509,124 @@
       margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--gold);
       font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--green);
     }
-    .compact-ui header {
-        left: 12px; right: 12px;
+    /* Narrow portrait phones: 2-row layout with tight frames */
+    @media (max-width: 639px) and (orientation: portrait), (max-width: 480px) {
+      header {
+        left: calc(10px + env(safe-area-inset-left, 0px));
+        right: calc(10px + env(safe-area-inset-right, 0px));
+        display: grid;
         grid-template-columns: 1fr auto;
         grid-template-areas:
           "brand price"
           "steps steps";
-        row-gap: 14px;
-    }
-    .compact-ui .brand, .compact-ui .price-pill { width: auto; }
-    .compact-ui .config-dock { width: min(760px, 100%); }
-    .compact-ui nav.steps { justify-content: flex-start; }
-    .compact-ui .step {
-      padding-inline: 6px; font-size: 8.5px; letter-spacing: .1em;
-    }
-    .compact-ui .view {
-      padding-inline: 8px; font-size: 9px; letter-spacing: .11em;
-    }
-    .compact-ui .view-band {
-        left: calc(12px + env(safe-area-inset-left, 0px));
-        right: calc(104px + env(safe-area-inset-right, 0px));
-        transform: none; width: auto; max-width: none; padding-inline: 16px;
-        bottom: calc(18px + var(--safe-b));
-    }
-    .compact-ui .config-dock aside { max-height: min(62dvh, 520px); }
-    .compact-ui .frame { inset: 6px; }
-    .compact-ui body.ready .hint { display: none !important; }
-    .compact-ui .brand-mark {
-        right: calc(14px + env(safe-area-inset-right, 0px));
-        bottom: calc(14px + var(--safe-b));
-        width: min(84px, 22vw);
-    }
-    @media (max-width: 520px) {
+        row-gap: 8px;
+        column-gap: 8px;
+      }
+      .brand {
+        grid-area: brand;
+        justify-self: start;
+        padding: 5px 10px;
+        gap: 8px;
+      }
+      .brand h1 { font-size: 14px; }
       .brand p { display: none; }
-      .step { padding-block: 8px; }
-      .config-toggle { flex-basis: 42px; width: 42px; }
+      .price-pill {
+        grid-area: price;
+        justify-self: end;
+        padding: 5px 10px;
+      }
+      .price-pill strong { font-size: 14px; }
+      .price-pill span { font-size: 7.5px; }
+      .config-dock {
+        grid-area: steps;
+        width: max-content;
+        max-width: 100%;
+        justify-self: center;
+      }
+      .step {
+        padding: 5px 7px;
+        font-size: 8.5px;
+        letter-spacing: .08em;
+      }
+      .view {
+        padding: 5px 7px;
+        font-size: 8.5px;
+        letter-spacing: .08em;
+      }
+      .brand-mark {
+        right: calc(12px + env(safe-area-inset-right, 0px));
+        bottom: calc(52px + var(--safe-b));
+        width: 64px;
+        opacity: 0.85;
+      }
       .cards { grid-template-columns: 1fr; }
+      .frame { inset: 6px; }
     }
+
+    /* Landscape viewports: keep header single-row and ultra-compact to free the screen */
     @media (orientation: landscape) and (max-height: 600px) {
-      .compact-ui header { top: calc(8px + var(--safe-t)); row-gap: 6px; }
-      .compact-ui .brand, .compact-ui .price-pill { padding-top: 6px; padding-bottom: 6px; }
-      .compact-ui .brand h1 { font-size: 16px; }
-      .compact-ui .price-pill strong { font-size: 16px; }
-      .compact-ui nav.steps { padding-top: 2px; padding-bottom: 2px; }
-      .compact-ui .config-dock aside { max-height: min(54dvh, calc(100dvh - 112px - var(--safe-t))); }
-      .touch-flight { right: calc(10px + env(safe-area-inset-right, 0px)); gap: 7px; }
-      .touch-flight button { width: 42px; height: 42px; }
-      .touch-guide { bottom: calc(72px + var(--safe-b)); }
+      header {
+        top: calc(8px + var(--safe-t));
+        left: calc(14px + env(safe-area-inset-left, 0px));
+        right: calc(14px + env(safe-area-inset-right, 0px));
+        gap: 8px;
+      }
+      .brand {
+        padding: 4px 10px;
+        gap: 8px;
+      }
+      .mark { width: 20px; height: 20px; font-size: 10px; }
+      .brand h1 { font-size: 14px; }
+      .brand p { display: none; }
+      .price-pill {
+        padding: 4px 10px;
+      }
+      .price-pill span { font-size: 7.5px; }
+      .price-pill strong { font-size: 14px; }
+      .config-tabs {
+        padding: 2px 4px;
+      }
+      .step {
+        padding: 4px 7px;
+        font-size: 8.5px;
+        letter-spacing: .08em;
+      }
+      .config-toggle {
+        width: 24px;
+        height: 24px;
+        min-height: 24px;
+        flex: 0 0 24px;
+      }
+      .config-dock aside {
+        max-height: min(62dvh, calc(100dvh - 64px - var(--safe-t)));
+      }
+      .view-band {
+        bottom: calc(10px + var(--safe-b));
+        padding: 2px 5px;
+      }
+      .view {
+        padding: 4px 7px;
+        font-size: 8.5px;
+        letter-spacing: .08em;
+      }
+      .brand-mark {
+        right: calc(14px + env(safe-area-inset-right, 0px));
+        bottom: calc(10px + var(--safe-b));
+        width: min(78px, 12vw);
+      }
+      .touch-flight {
+        right: calc(10px + env(safe-area-inset-right, 0px));
+        gap: 6px;
+      }
+      .touch-flight button {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+      }
+      .touch-guide {
+        bottom: calc(50px + var(--safe-b));
+      }
+      .frame { inset: 6px; }
     }
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -676,13 +747,19 @@
     const EUR = n => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
     const coarsePointer = matchMedia('(pointer: coarse)').matches;
     const touchCapable = navigator.maxTouchPoints > 0 || coarsePointer || 'ontouchstart' in window;
-    const isCompactLayout = () => innerWidth <= 1100 || (touchCapable && innerWidth <= 1400);
+    const isLandscape = () => window.matchMedia('(orientation: landscape)').matches || innerWidth > innerHeight;
+    const isNarrowPortrait = () => !isLandscape() && innerWidth < 640;
+    const isCompactLayout = () => isNarrowPortrait();
     const syncLayoutClasses = () => {
+      const land = isLandscape();
       document.documentElement.classList.toggle('touch-capable', touchCapable);
-      document.documentElement.classList.toggle('compact-ui', isCompactLayout());
+      document.documentElement.classList.toggle('is-landscape', land);
+      document.documentElement.classList.toggle('is-portrait', !land);
+      document.documentElement.classList.toggle('narrow-portrait', isNarrowPortrait());
+      document.documentElement.classList.toggle('compact-ui', isNarrowPortrait());
     };
     syncLayoutClasses();
-    const mobile = isCompactLayout() || touchCapable;
+    const mobile = touchCapable;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const canvas = document.getElementById('c');
 
@@ -2501,17 +2578,15 @@
         `<button class="view ${state.view === v.id ? 'on' : ''}" data-view="${v.id}" type="button">${v.name}</button>`
       ).join('');
       requestAnimationFrame(() => {
-        viewNav.querySelector('.view.on')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-        requestAnimationFrame(() => updateViewEdgeVisibility(viewNav));
-      });
-    }
-    function updateViewEdgeVisibility(viewNav) {
-      if (!viewNav) return;
-      const edge = viewNav.getBoundingClientRect();
-      viewNav.querySelectorAll('.view').forEach(button => {
-        const rect = button.getBoundingClientRect();
-        const fullyVisible = rect.left >= edge.left - .5 && rect.right <= edge.right + .5;
-        button.classList.toggle('edge-clipped', !fullyVisible);
+        const onBtn = viewNav.querySelector('.view.on');
+        if (onBtn) {
+          const isLand = window.matchMedia('(orientation: landscape)').matches || innerWidth > innerHeight;
+          if (!isLand) {
+            onBtn.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
+          } else {
+            viewNav.scrollLeft = 0;
+          }
+        }
       });
     }
     function specLines() {
@@ -2603,12 +2678,6 @@
       controls.autoRotate = false; flyTo(b.dataset.view);
       setPanelCollapsed(true);
     });
-    let viewEdgeFrame = 0;
-    document.getElementById('views').addEventListener('scroll', e => {
-      const viewNav = e.currentTarget;
-      cancelAnimationFrame(viewEdgeFrame);
-      viewEdgeFrame = requestAnimationFrame(() => updateViewEdgeVisibility(viewNav));
-    }, { passive: true });
     document.getElementById('hint')?.addEventListener('click', () => {
       document.getElementById('hint').classList.add('hidden');
     });
@@ -2825,14 +2894,17 @@
     });
     let viewportFrame = 0;
     let viewportSettleTimer = 0;
-    let lastOrientation = innerWidth >= innerHeight ? 'landscape' : 'portrait';
+    let lastOrientation = (window.matchMedia('(orientation: landscape)').matches || innerWidth > innerHeight) ? 'landscape' : 'portrait';
     function applyViewportRefresh() {
-      const orientation = innerWidth >= innerHeight ? 'landscape' : 'portrait';
+      const isLand = window.matchMedia('(orientation: landscape)').matches || innerWidth > innerHeight;
+      const orientation = isLand ? 'landscape' : 'portrait';
       const orientationChanged = orientation !== lastOrientation;
       lastOrientation = orientation;
       if (orientationChanged) resetTouchControls();
       syncPanelLayout(orientationChanged);
+      renderViews();
       composeView();
+      updateViewsContrast();
     }
     function scheduleViewportRefresh() {
       cancelAnimationFrame(viewportFrame);
