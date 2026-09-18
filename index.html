@@ -32,7 +32,7 @@
       --glass-r-btn: 14px;
       --safe-b: env(safe-area-inset-bottom, 0px);
       --safe-t: env(safe-area-inset-top, 0px);
-      --side-w: 280px;
+      --side-w: 248px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; background: #7eacbb; }
@@ -94,7 +94,7 @@
       display: flex; flex-direction: column; align-items: flex-start;
       gap: 1px; padding: 5px 10px 6px;
       border-radius: var(--glass-r-pill);
-      flex-shrink: 0; width: max-content; max-width: 118px; box-sizing: border-box;
+      flex-shrink: 0; width: max-content; max-width: none; box-sizing: border-box;
     }
     .brand-line {
       display: flex; align-items: center; gap: 7px; width: max-content;
@@ -113,15 +113,16 @@
     }
     .brand-sub {
       font-family: "Cormorant Garamond", serif; font-size: 10px; font-weight: 600;
-      letter-spacing: .12em; text-transform: uppercase; line-height: 1.15;
+      letter-spacing: .1em; text-transform: uppercase; line-height: 1.15;
       color: var(--ui-muted); text-shadow: var(--ui-shadow);
       padding-left: 27px;
       margin: 0;
+      white-space: nowrap;
     }
     .config-dock {
       position: relative; z-index: 30;
-      width: min(var(--side-w), calc(100% - 130px));
-      max-width: calc(100% - 130px);
+      width: var(--side-w);
+      max-width: calc(100% - 148px);
       display: flex; justify-content: flex-start;
       flex: 0 1 auto; margin: 0;
     }
@@ -312,11 +313,11 @@
     .hint:hover .hint-dismiss { color: rgba(244, 239, 228, .78); }
     .config-dock aside {
       position: absolute; z-index: 25;
-      top: calc(100% + 8px); left: 0; right: auto; bottom: auto;
+      top: calc(100% + 8px); left: 0; right: 0; bottom: auto;
       transform: none;
-      width: 100%;
-      min-width: min(100%, var(--side-w));
-      max-width: 100%;
+      width: auto;
+      min-width: 0;
+      max-width: none;
       height: auto; max-height: min(66dvh, 620px);
       border-radius: var(--glass-r-panel); display: flex; flex-direction: column; overflow: hidden;
       box-sizing: border-box;
@@ -472,7 +473,7 @@
     .load-legend p { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: rgba(232,242,248,.5); }
     .bottom-bar {
       position: fixed;
-      z-index: 24;
+      z-index: 26;
       left: calc(18px + env(safe-area-inset-left, 0px));
       right: calc(18px + env(safe-area-inset-right, 0px));
       bottom: calc(14px + var(--safe-b));
@@ -482,6 +483,8 @@
       gap: 12px;
       pointer-events: none;
       box-sizing: border-box;
+      visibility: visible;
+      opacity: 1;
     }
     .bottom-bar .view-band {
       position: static;
@@ -575,12 +578,12 @@
       }
       .brand {
         padding: 4px 8px 5px;
-        max-width: 108px;
+        max-width: none;
       }
       .brand-title { font-size: 13px; }
       .brand-sub { font-size: 9px; padding-left: 25px; }
       .mark { width: 18px; height: 18px; font-size: 9px; }
-      .config-dock { max-width: calc(100% - 118px); }
+      .config-dock { max-width: calc(100% - 148px); }
       .step {
         padding: 5px 7px;
         font-size: 8.5px;
@@ -608,11 +611,11 @@
       gap: 8px;
       align-items: flex-start;
     }
-    html.narrow-portrait .brand { padding: 4px 8px 5px; max-width: 108px; }
+    html.narrow-portrait .brand { padding: 4px 8px 5px; max-width: none; }
     html.narrow-portrait .brand-title { font-size: 13px; }
     html.narrow-portrait .brand-sub { font-size: 9px; padding-left: 25px; }
     html.narrow-portrait .mark { width: 18px; height: 18px; font-size: 9px; }
-    html.narrow-portrait .config-dock { max-width: calc(100% - 118px); }
+    html.narrow-portrait .config-dock { max-width: calc(100% - 148px); }
     html.narrow-portrait .frame { inset: 6px; }
     html.narrow-portrait .bottom-bar {
       left: calc(14px + env(safe-area-inset-left, 0px));
@@ -630,7 +633,7 @@
       }
       .brand {
         padding: 3px 8px 4px;
-        max-width: 104px;
+        max-width: none;
       }
       .mark { width: 18px; height: 18px; font-size: 9px; }
       .brand-title { font-size: 12px; }
@@ -647,7 +650,7 @@
         min-height: 24px;
         flex: 0 0 24px;
       }
-      .config-dock { max-width: calc(100% - 116px); }
+      .config-dock { max-width: calc(100% - 148px); }
       .config-dock aside {
         max-height: min(62dvh, calc(100dvh - 64px - var(--safe-t)));
       }
