@@ -800,12 +800,12 @@
     const EUR = n => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
     const coarsePointer = matchMedia('(pointer: coarse)').matches;
     const touchCapable = navigator.maxTouchPoints > 0 || coarsePointer || 'ontouchstart' in window;
-    /* Prefer live box size over orientation MQ — MQ can lag after rotate-back to portrait */
+    const canvas = document.getElementById('c');
+    /* Renderer CSS size and drawing buffer must share one box — no stretch. */
     const viewportSize = () => {
-      const vv = window.visualViewport;
-      const w = Math.round((vv && vv.width) || innerWidth);
-      const h = Math.round((vv && vv.height) || innerHeight);
-      return { w: Math.max(1, w), h: Math.max(1, h) };
+      const w = Math.max(1, window.innerWidth || 1);
+      const h = Math.max(1, window.innerHeight || 1);
+      return { w, h };
     };
     const isLandscape = () => {
       const { w, h } = viewportSize();
@@ -815,7 +815,10 @@
       const { w, h } = viewportSize();
       return h >= w && w < 640;
     };
-    const isCompactLayout = () => isNarrowPortrait();
+    const isCompactLayout = () => {
+      const { w, h } = viewportSize();
+      return h >= w; // any portrait: no desktop view-offset framing
+    };
     const syncLayoutClasses = () => {
       const { w, h } = viewportSize();
       const land = w > h;
@@ -825,13 +828,12 @@
       root.classList.toggle('is-landscape', land);
       root.classList.toggle('is-portrait', !land);
       root.classList.toggle('narrow-portrait', narrow);
-      root.classList.toggle('compact-ui', narrow);
+      root.classList.toggle('compact-ui', narrow || !land);
       root.dataset.orientation = land ? 'landscape' : 'portrait';
     };
     syncLayoutClasses();
     const mobile = touchCapable;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const canvas = document.getElementById('c');
 
     {
       const probe = document.createElement('canvas');
@@ -1455,7 +1457,10 @@
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: !mobile, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.2 : 1.75));
-    renderer.setSize(innerWidth, innerHeight);
+    {
+      const { w, h } = viewportSize();
+      renderer.setSize(w, h, true);
+    }
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.42;
@@ -1485,16 +1490,18 @@
     let bbox = new THREE.Box3();
     const yachtRest = new THREE.Vector3();
 
+    let _viewW = 0;
+    let _viewH = 0;
     function composeView() {
       const { w, h } = viewportSize();
+      _viewW = w;
+      _viewH = h;
       camera.aspect = w / h;
-      renderer.setSize(w, h, false);
-      if (canvas) {
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-      }
+      // updateStyle=true keeps canvas CSS px === buffer CSS px (no stretch)
+      renderer.setSize(w, h, true);
       const interior = state.view === 'salon' || state.view === 'galley' || state.view === 'cabin' || state.view === 'master' || state.view === 'bridge';
-      if (isCompactLayout() || interior || !yacht || !bbox || bbox.isEmpty()) {
+      // Portrait: strip any view-offset left over from landscape desktop framing
+      if (h >= w || isCompactLayout() || interior || !yacht || !bbox || bbox.isEmpty()) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
         return;
@@ -2981,13 +2988,11 @@
     function scheduleViewportRefresh() {
       cancelAnimationFrame(viewportFrame);
       clearTimeout(viewportSettleTimer);
-      // Double-rAF + delayed settles: iOS often reports stale sizes mid-rotate
+      // Double-rAF + one settle: sizes stabilize after window chrome finishes
       viewportFrame = requestAnimationFrame(() => {
         viewportFrame = requestAnimationFrame(applyViewportRefresh);
       });
-      viewportSettleTimer = setTimeout(applyViewportRefresh, 120);
-      setTimeout(applyViewportRefresh, 320);
-      setTimeout(applyViewportRefresh, 600);
+      viewportSettleTimer = setTimeout(applyViewportRefresh, 180);
     }
     addEventListener('resize', scheduleViewportRefresh, { passive: true });
     addEventListener('orientationchange', scheduleViewportRefresh, { passive: true });
@@ -2995,6 +3000,7 @@
     visualViewport?.addEventListener('resize', scheduleViewportRefresh, { passive: true });
     screen.orientation?.addEventListener?.('change', scheduleViewportRefresh);
     new ResizeObserver(scheduleViewportRefresh).observe(document.documentElement);
+    new ResizeObserver(scheduleViewportRefresh).observe(canvas);
 
     const viewsNav = document.getElementById('views');
     const viewsBand = document.querySelector('.view-band');
@@ -3149,6 +3155,8 @@
     function tick() {
       requestAnimationFrame(tick);
       try {
+        const { w, h } = viewportSize();
+        if (w !== _viewW || h !== _viewH) composeView();
         const dt = Math.min(clock.getDelta(), 0.05);
         if (sky.material.uniforms.time) sky.material.uniforms.time.value += dt;
         if (camTween.t < 1) {
