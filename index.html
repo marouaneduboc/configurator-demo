@@ -740,10 +740,6 @@
       const { w, h } = viewportSize();
       return h >= w && w < 640;
     };
-    const isCompactLayout = () => {
-      const { w, h } = viewportSize();
-      return h >= w; // any portrait: no desktop view-offset framing
-    };
     const syncLayoutClasses = () => {
       const { w, h } = viewportSize();
       const land = w > h;
@@ -1416,6 +1412,7 @@
     let yacht;
     let bbox = new THREE.Box3();
     const yachtRest = new THREE.Vector3();
+    let modelProjectionRefs = null;
 
     let _viewW = 0;
     let _viewH = 0;
@@ -1429,59 +1426,94 @@
       // Never write inline CSS dimensions; size only the drawing buffer from
       // the canvas box Safari is actually displaying.
       renderer.setSize(w, h, false);
-      const interior = state.view === 'salon' || state.view === 'galley' || state.view === 'cabin' || state.view === 'master' || state.view === 'bridge';
-      // Portrait: strip any view-offset left over from landscape desktop framing
-      if (h >= w || isCompactLayout() || interior || !yacht || !bbox || bbox.isEmpty()) {
-        if (state.view === 'hero') camera.fov = viewPose('hero').fov;
-        camera.clearViewOffset();
-        camera.updateProjectionMatrix();
-        window.__dbg.view = { w, h, aspect: camera.aspect, fov: camera.fov, offset: false, pixelRatio };
-        return;
-      }
-      const frame = document.querySelector('.frame');
-      const leftEdge = frame ? frame.getBoundingClientRect().left : 10;
-      const rightEdge = frame ? frame.getBoundingClientRect().right : w - 10;
-      if (state.view === 'hero') {
-        fitProfileStage(leftEdge, rightEdge, w, h);
-        window.__dbg.view = { w, h, aspect: camera.aspect, fov: camera.fov, offset: !!(camera.view && camera.view.enabled), pixelRatio };
-        return;
-      }
-      const occluded = Math.min(leftEdge + 24, w * 0.48);
-      camera.setViewOffset(w, h, -Math.round(occluded * 0.88), 0, w, h);
-      camera.updateProjectionMatrix();
-      window.__dbg.view = { w, h, aspect: camera.aspect, fov: camera.fov, offset: true, pixelRatio };
-    }
-    function fitProfileStage(leftEdge, rightEdge, w, h) {
-      const L = leftEdge + 6;
-      const R = rightEdge - 6;
-      const y = 1.18;
-      const zBow = bbox.min.z;
-      const zStern = bbox.max.z;
-      const pose = viewPose('hero');
-      camera.fov = pose.fov;
+
+      // Orientation changes may crop the view, but they must never change its
+      // optical projection. Every view has one FOV and no orientation-specific
+      // view offset; the removed left panel no longer needs asymmetric framing.
+      camera.fov = viewPose(state.view).fov;
+      camera.zoom = 1;
       camera.clearViewOffset();
       camera.updateProjectionMatrix();
-      const projectX = z => {
-        const v = new THREE.Vector3(0, y, z).project(camera);
-        return (v.x * 0.5 + 0.5) * w;
+      window.__dbg.view = {
+        w, h,
+        aspect: camera.aspect,
+        fov: camera.fov,
+        zoom: camera.zoom,
+        offset: false,
+        pixelRatio,
+        projectedModel: projectedModelRatio(w, h)
       };
-      let bowX = projectX(zBow);
-      let sternX = projectX(zStern);
-      const curW = Math.max(8, Math.abs(bowX - sternX));
-      const wantW = Math.max(8, R - L);
-      camera.fov = THREE.MathUtils.clamp(pose.fov * (curW / wantW), 16, 42);
-      camera.updateProjectionMatrix();
-      let offsetX = 0;
-      camera.setViewOffset(w, h, 0, 0, w, h);
-      for (let i = 0; i < 8; i++) {
-        camera.view.offsetX = offsetX;
-        camera.updateProjectionMatrix();
-        bowX = projectX(zBow);
-        sternX = projectX(zStern);
-        offsetX -= (L - Math.min(bowX, sternX));
+    }
+    function projectedModelRatio(w, h) {
+      if (!modelProjectionRefs) return null;
+      const project = localPoint => {
+        const p = localPoint.clone().applyMatrix4(modelProjectionRefs.restMatrix).project(camera);
+        return new THREE.Vector2((p.x * 0.5 + 0.5) * w, (0.5 - p.y * 0.5) * h);
+      };
+      const lengthPx = project(modelProjectionRefs.lengthA).distanceTo(project(modelProjectionRefs.lengthB));
+      const heightPx = project(modelProjectionRefs.heightA).distanceTo(project(modelProjectionRefs.heightB));
+      return {
+        lengthPx,
+        heightPx,
+        screenAspect: lengthPx / Math.max(heightPx, 1e-6),
+        modelAspect: modelProjectionRefs.modelAspect,
+        normalizedAspect: (lengthPx / Math.max(heightPx, 1e-6)) / modelProjectionRefs.modelAspect
+      };
+    }
+    function buildModelProjectionRefs() {
+      if (!yacht || bbox.isEmpty()) {
+        modelProjectionRefs = null;
+        return;
       }
-      camera.view.offsetX = offsetX;
-      camera.updateProjectionMatrix();
+      yacht.updateMatrixWorld(true);
+      const size = bbox.getSize(new THREE.Vector3());
+      const centerZ = bbox.min.z + size.z * 0.5;
+      const midY = bbox.min.y + size.y * 0.42;
+      const lengthA = new THREE.Vector3(0, midY, bbox.min.z);
+      const lengthB = new THREE.Vector3(0, midY, bbox.max.z);
+      const heightA = new THREE.Vector3(0, bbox.min.y, centerZ);
+      const heightB = new THREE.Vector3(0, bbox.max.y, centerZ);
+      const restMatrix = yacht.matrixWorld.clone();
+      const { w, h } = viewportSize();
+      const project = localPoint => {
+        const p = localPoint.clone().applyMatrix4(restMatrix).project(camera);
+        return new THREE.Vector2((p.x * 0.5 + 0.5) * w, (0.5 - p.y * 0.5) * h);
+      };
+      const lengthPx = project(lengthA).distanceTo(project(lengthB));
+      const heightPx = project(heightA).distanceTo(project(heightB));
+      modelProjectionRefs = {
+        restMatrix,
+        lengthA,
+        lengthB,
+        heightA,
+        heightB,
+        modelAspect: lengthPx / Math.max(heightPx, 1e-6)
+      };
+    }
+    function projectionSnapshot() {
+      const { w, h } = viewportSize();
+      const rect = canvas.getBoundingClientRect();
+      const dpr = renderer.getPixelRatio();
+      const projected = projectedModelRatio(w, h);
+      return {
+        w,
+        h,
+        rect: { width: rect.width, height: rect.height },
+        buffer: { width: renderer.domElement.width, height: renderer.domElement.height },
+        style: {
+          width: canvas.style.width || null,
+          height: canvas.style.height || null
+        },
+        dpr,
+        camera: {
+          aspect: camera.aspect,
+          fov: camera.fov,
+          zoom: camera.zoom,
+          offset: !!(camera.view && camera.view.enabled)
+        },
+        projected,
+        orientation: document.documentElement.dataset.orientation || null
+      };
     }
     composeView();
     const sky = new Sky();
@@ -2459,8 +2491,41 @@
       yachtRest.copy(yacht.position);
       bakeHullWaterMask();
       flyTo('hero', true);
+      buildModelProjectionRefs();
       composeView();
       window.__three = { scene, camera, renderer, yacht, water, sky, controls, shared, pbr };
+      window.__projectionTest = {
+        snapshot: projectionSnapshot,
+        refresh: applyViewportRefresh,
+        driftTolerance: 0.02,
+        baselineAspect: null,
+        assertStable(tag) {
+          const snap = projectionSnapshot();
+          const norm = snap.projected?.normalizedAspect;
+          const aspectOk = Math.abs(snap.camera.aspect - snap.w / snap.h) < 1e-4;
+          const bufferOk = snap.buffer.width === Math.round(snap.w * snap.dpr)
+            && snap.buffer.height === Math.round(snap.h * snap.dpr);
+          const offsetOk = !snap.camera.offset;
+          const styleOk = !snap.style.width && !snap.style.height;
+          if (norm != null && this.baselineAspect == null) this.baselineAspect = norm;
+          const drift = norm != null && this.baselineAspect != null
+            ? Math.abs(norm - this.baselineAspect)
+            : null;
+          const modelOk = drift != null && drift <= this.driftTolerance;
+          return {
+            tag,
+            pass: aspectOk && bufferOk && offsetOk && styleOk && modelOk,
+            aspectOk,
+            bufferOk,
+            offsetOk,
+            styleOk,
+            modelOk,
+            normalizedAspect: norm,
+            aspectDrift: drift,
+            snap
+          };
+        }
+      };
       setProgress(1, 'Ready', 'WASD to walk the decks');
       document.getElementById('loader').classList.add('hide');
       document.body.classList.add('ready');
@@ -2905,13 +2970,19 @@
       resetTouchControls();
     });
     let viewportFrame = 0;
+    let orientationSettle = 0;
     let lastOrientation = isLandscape() ? 'landscape' : 'portrait';
     function applyViewportRefresh() {
       syncLayoutClasses();
       const orientation = isLandscape() ? 'landscape' : 'portrait';
       const orientationChanged = orientation !== lastOrientation;
       lastOrientation = orientation;
-      if (orientationChanged) resetTouchControls();
+      if (orientationChanged) {
+        resetTouchControls();
+        // iOS Safari can emit several intermediate viewport sizes while the
+        // address bar settles; keep recomposing until the box stabilises.
+        orientationSettle = 8;
+      }
       syncPanelLayout(orientationChanged);
       renderViews();
       composeView();
@@ -3087,7 +3158,8 @@
         // Mobile browsers can resize the viewport without reliably firing every
         // orientation event. Reuse the complete refresh path so layout classes,
         // controls, camera and canvas can never disagree about the orientation.
-        if (w !== _viewW || h !== _viewH) applyViewportRefresh();
+        if (w !== _viewW || h !== _viewH || orientationSettle > 0) applyViewportRefresh();
+        if (orientationSettle > 0) orientationSettle--;
         const dt = Math.min(clock.getDelta(), 0.05);
         if (sky.material.uniforms.time) sky.material.uniforms.time.value += dt;
         if (camTween.t < 1) {
