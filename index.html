@@ -62,7 +62,7 @@
       background: linear-gradient(90deg, transparent, rgba(197,164,110,.55), transparent);
       opacity: .7;
     }
-    /* Shared liquid glass — used by brand, steps, price, views, panel, buttons */
+    /* Shared liquid glass — used by steps, views, panels and buttons */
     .glass {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -82,24 +82,14 @@
     }
     aside.glass, .hint.glass { position: fixed; }
     header {
-      position: fixed; top: calc(12px + var(--safe-t));
-      left: calc(14px + env(safe-area-inset-left, 0px));
-      right: calc(14px + env(safe-area-inset-right, 0px));
+      position: fixed; top: calc(4px + var(--safe-t));
+      left: calc(6px + env(safe-area-inset-left, 0px));
+      right: calc(6px + env(safe-area-inset-right, 0px));
       z-index: 20; display: flex;
       justify-content: center; align-items: flex-start;
-      gap: 10px; pointer-events: none;
+      pointer-events: none;
     }
     header > * { pointer-events: auto; }
-    .brand {
-      position: absolute; top: 0; left: 0;
-      display: flex; flex-direction: column; align-items: flex-start;
-      gap: 1px; padding: 5px 10px 6px;
-      border-radius: var(--glass-r-pill);
-      flex-shrink: 0; width: max-content; max-width: none; box-sizing: border-box;
-    }
-    .brand-line {
-      display: flex; align-items: center; gap: 7px; width: max-content;
-    }
     .mark {
       width: 20px; height: 20px; border-radius: 50%;
       border: 1px solid rgba(197,164,110,.7);
@@ -107,23 +97,10 @@
       font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 10px;
       letter-spacing: .06em; flex-shrink: 0;
     }
-    .brand-title {
-      font-family: "Cormorant Garamond", serif; font-size: 15px; font-weight: 700;
-      letter-spacing: .08em; text-transform: uppercase; line-height: 1;
-      color: var(--ui-ink); text-shadow: var(--ui-shadow);
-    }
-    .brand-sub {
-      font-family: "Cormorant Garamond", serif; font-size: 10px; font-weight: 600;
-      letter-spacing: .1em; text-transform: uppercase; line-height: 1.15;
-      color: var(--ui-muted); text-shadow: var(--ui-shadow);
-      padding-left: 27px;
-      margin: 0;
-      white-space: nowrap;
-    }
     .config-dock {
       position: relative; z-index: 30;
       width: max-content;
-      max-width: calc(100% - 280px);
+      max-width: calc(100% - 12px);
       display: flex; justify-content: flex-start;
       flex: 0 1 auto; margin: 0;
     }
@@ -161,7 +138,7 @@
       default = light type over dark water/sky; .on-light = dark type over bright backdrop.
       Accent hues (green / burgundy / gold / navy) are preserved, only luminance flips.
     */
-    .brand, .config-tabs, aside, .view-band {
+    .config-tabs, aside, .view-band {
       --ui-ink: #ffffff;
       --ui-muted: rgba(255, 255, 255, 0.68);
       --ui-navy: #f4f7fb;
@@ -169,7 +146,7 @@
       --ui-burgundy: #e8a0a8;
       --ui-shadow: 0 1px 3px rgba(0, 12, 24, 0.55);
     }
-    .brand.on-light, .config-tabs.on-light, aside.on-light, .view-band.on-light {
+    .config-tabs.on-light, aside.on-light, .view-band.on-light {
       --ui-ink: var(--ink);
       --ui-muted: var(--muted);
       --ui-navy: var(--navy);
@@ -177,13 +154,13 @@
       --ui-burgundy: var(--burgundy);
       --ui-shadow: none;
     }
-    .brand-title, .aside-head h2, .block h3, .card b, .spec .tot,
+    .aside-head h2, .block h3, .card b, .spec .tot,
     .step.on, .view.on, .swatch.on small, .go {
       color: var(--ui-ink);
       text-shadow: var(--ui-shadow);
     }
     .step.on, .view.on { font-weight: 600; }
-    .brand-sub, .aside-head p, .card span, .spec li span,
+    .aside-head p, .card span, .spec li span,
     .step, .view, .swatch small {
       color: var(--ui-muted);
       text-shadow: var(--ui-shadow);
@@ -192,7 +169,7 @@
     .block h3 { color: var(--ui-navy); }
     .delta { color: var(--ui-burgundy); font-weight: 500; }
     .mark { color: var(--ui-navy); }
-    .brand.on-light .mark, aside.on-light .mark { color: var(--navy); }
+    aside.on-light .mark { color: var(--navy); }
     .view-band {
       position: fixed; z-index: 22;
       top: auto; left: auto; right: auto;
@@ -542,65 +519,28 @@
       margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--gold);
       font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--green);
     }
-    /* Narrow portrait: brand + tabs on one row; JS class mirrors orientation */
-    @media (max-width: 639px) and (orientation: portrait) {
-      header {
-        left: calc(10px + env(safe-area-inset-left, 0px));
-        right: calc(10px + env(safe-area-inset-right, 0px));
-        gap: 8px;
-        align-items: flex-start;
-      }
-      .brand {
-        padding: 4px 8px 5px;
-        max-width: none;
-      }
-      .brand-title { font-size: 13px; }
-      .brand-sub { font-size: 9px; padding-left: 25px; }
-      .mark { width: 18px; height: 18px; font-size: 9px; }
-      .config-dock {
-        width: var(--side-w);
-        max-width: calc(100% - 20px);
-        margin-top: 38px;
-      }
-      .step {
-        padding: 5px 7px;
-        font-size: 8.5px;
-        letter-spacing: .08em;
-      }
-      .view {
-        padding: 5px 7px;
-        font-size: 8.5px;
-        letter-spacing: .08em;
-      }
-      .bottom-bar {
-        left: calc(14px + env(safe-area-inset-left, 0px));
-        right: calc(14px + env(safe-area-inset-right, 0px));
-        bottom: calc(12px + var(--safe-b));
-      }
-      .brand-mark {
-        right: calc(12px + env(safe-area-inset-right, 0px));
-        bottom: calc(12px + var(--safe-b));
-        width: 64px;
-        opacity: 0.85;
-      }
-      .bottom-bar .view-band { max-width: calc(100% - 88px); }
-      .cards { grid-template-columns: 1fr; }
-      .frame { inset: 6px; }
-    }
+    /* JS-owned orientation classes avoid stale iOS CSS media-query state. */
     html.narrow-portrait header {
-      left: calc(10px + env(safe-area-inset-left, 0px));
-      right: calc(10px + env(safe-area-inset-right, 0px));
-      gap: 8px;
-      align-items: flex-start;
+      left: calc(6px + env(safe-area-inset-left, 0px));
+      right: calc(6px + env(safe-area-inset-right, 0px));
     }
-    html.narrow-portrait .brand { padding: 4px 8px 5px; max-width: none; }
-    html.narrow-portrait .brand-title { font-size: 13px; }
-    html.narrow-portrait .brand-sub { font-size: 9px; padding-left: 25px; }
-    html.narrow-portrait .mark { width: 18px; height: 18px; font-size: 9px; }
     html.narrow-portrait .config-dock {
-      width: var(--side-w);
-      max-width: calc(100% - 20px);
-      margin-top: 38px;
+      width: max-content;
+      max-width: calc(100% - 12px);
+    }
+    html.narrow-portrait nav.steps {
+      flex: 0 0 auto;
+      overflow-x: visible;
+    }
+    html.narrow-portrait .step {
+      padding: 5px 7px;
+      font-size: 8.5px;
+      letter-spacing: .08em;
+    }
+    html.narrow-portrait .view {
+      padding: 5px 7px;
+      font-size: 8.5px;
+      letter-spacing: .08em;
     }
     html.narrow-portrait .frame { inset: 6px; }
     html.narrow-portrait .bottom-bar {
@@ -608,72 +548,67 @@
       right: calc(14px + env(safe-area-inset-right, 0px));
       bottom: calc(12px + var(--safe-b));
     }
+    html.narrow-portrait .brand-mark {
+      right: calc(12px + env(safe-area-inset-right, 0px));
+      bottom: calc(12px + var(--safe-b));
+      width: 64px;
+      opacity: 0.85;
+    }
+    html.narrow-portrait .bottom-bar .view-band { max-width: calc(100% - 88px); }
+    html.narrow-portrait .cards { grid-template-columns: 1fr; }
 
     /* Landscape viewports: keep header single-row and ultra-compact to free the screen */
-    @media (orientation: landscape) and (max-height: 600px) {
-      header {
-        top: calc(8px + var(--safe-t));
-        left: calc(12px + env(safe-area-inset-left, 0px));
-        right: calc(12px + env(safe-area-inset-right, 0px));
-        gap: 8px;
+    @media (max-height: 600px) {
+      html.is-landscape header {
+        top: calc(4px + var(--safe-t));
+        left: calc(6px + env(safe-area-inset-left, 0px));
+        right: calc(6px + env(safe-area-inset-right, 0px));
       }
-      .brand {
-        padding: 3px 8px 4px;
-        max-width: none;
-      }
-      .mark { width: 18px; height: 18px; font-size: 9px; }
-      .brand-title { font-size: 12px; }
-      .brand-sub { font-size: 8px; padding-left: 25px; }
-      .config-tabs { padding: 2px 4px; }
-      .step {
+      html.is-landscape .config-tabs { padding: 2px 4px; }
+      html.is-landscape .step {
         padding: 4px 7px;
         font-size: 8.5px;
         letter-spacing: .08em;
       }
-      .config-toggle {
+      html.is-landscape .config-toggle {
         width: 24px;
         height: 24px;
         min-height: 24px;
         flex: 0 0 24px;
       }
-      .config-dock {
+      html.is-landscape .config-dock {
         width: max-content;
-        max-width: calc(100% - 210px);
+        max-width: calc(100% - 12px);
       }
-      nav.steps {
+      html.is-landscape nav.steps {
         flex: 0 0 auto;
         overflow-x: visible;
       }
-      .config-dock aside {
+      html.is-landscape .config-dock aside {
         max-height: min(62dvh, calc(100dvh - 64px - var(--safe-t)));
       }
-      .bottom-bar {
+      html.is-landscape .bottom-bar {
         left: calc(14px + env(safe-area-inset-left, 0px));
         right: calc(14px + env(safe-area-inset-right, 0px));
         bottom: calc(10px + var(--safe-b));
       }
-      .view {
+      html.is-landscape .view {
         padding: 4px 7px;
         font-size: 8.5px;
         letter-spacing: .08em;
       }
-      .brand-mark {
+      html.is-landscape .brand-mark {
         right: calc(14px + env(safe-area-inset-right, 0px));
         bottom: calc(10px + var(--safe-b));
         width: min(78px, 12vw);
       }
-      .touch-flight {
+      html.is-landscape .touch-flight {
         right: calc(10px + env(safe-area-inset-right, 0px));
         gap: 6px;
       }
-      .touch-flight button { width: 36px; height: 36px; font-size: 17px; }
-      .touch-guide { bottom: calc(46px + var(--safe-b)); }
-      .frame { inset: 5px; }
-    }
-    html.is-landscape header {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
+      html.is-landscape .touch-flight button { width: 36px; height: 36px; font-size: 17px; }
+      html.is-landscape .touch-guide { bottom: calc(46px + var(--safe-b)); }
+      html.is-landscape .frame { inset: 5px; }
     }
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
@@ -720,13 +655,6 @@
   </div>
   <img class="brand-mark" src="./assets/tiyan-logo.png?v=5" alt="TIYAN" width="160" height="113" decoding="async" />
   <header>
-    <div class="brand glass">
-      <div class="brand-line">
-        <div class="mark">A</div>
-        <span class="brand-title">ABIM</span>
-      </div>
-      <span class="brand-sub">Classic 144</span>
-    </div>
     <div class="config-dock" id="configDock">
       <div class="config-tabs glass">
         <nav class="steps" id="steps" role="tablist" aria-label="Configuration sections"></nav>
@@ -793,10 +721,15 @@
     const coarsePointer = matchMedia('(pointer: coarse)').matches;
     const touchCapable = navigator.maxTouchPoints > 0 || coarsePointer || 'ontouchstart' in window;
     const canvas = document.getElementById('c');
-    /* Renderer CSS size and drawing buffer must share one box — no stretch. */
+    /*
+      CSS owns the canvas box. Safari's inner/visual viewport values can pass
+      through stale landscape dimensions while its address bar settles after a
+      rotation, so rendering must follow the box actually displayed on screen.
+    */
     const viewportSize = () => {
-      const w = Math.max(1, window.innerWidth || 1);
-      const h = Math.max(1, window.innerHeight || 1);
+      const rect = canvas.getBoundingClientRect();
+      const w = Math.max(1, Math.round(rect.width));
+      const h = Math.max(1, Math.round(rect.height));
       return { w, h };
     };
     const isLandscape = () => {
@@ -1448,10 +1381,11 @@
     }
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: !mobile, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.2 : 1.75));
+    const renderPixelRatio = () => Math.min(window.devicePixelRatio || 1, mobile ? 1.2 : 1.75);
+    renderer.setPixelRatio(renderPixelRatio());
     {
       const { w, h } = viewportSize();
-      renderer.setSize(w, h, true);
+      renderer.setSize(w, h, false);
     }
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1464,7 +1398,8 @@
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x9ec9d8, 140, 900);
 
-    const camera = new THREE.PerspectiveCamera(34, innerWidth / innerHeight, 0.15, 20000);
+    const initialView = viewportSize();
+    const camera = new THREE.PerspectiveCamera(34, initialView.w / initialView.h, 0.15, 20000);
     camera.position.set(11.5, 2.35, 8.4);
 
     const controls = new OrbitControls(camera, canvas);
@@ -1489,14 +1424,18 @@
       _viewW = w;
       _viewH = h;
       camera.aspect = w / h;
-      // updateStyle=true keeps canvas CSS px === buffer CSS px (no stretch)
-      renderer.setSize(w, h, true);
+      const pixelRatio = renderPixelRatio();
+      if (renderer.getPixelRatio() !== pixelRatio) renderer.setPixelRatio(pixelRatio);
+      // Never write inline CSS dimensions; size only the drawing buffer from
+      // the canvas box Safari is actually displaying.
+      renderer.setSize(w, h, false);
       const interior = state.view === 'salon' || state.view === 'galley' || state.view === 'cabin' || state.view === 'master' || state.view === 'bridge';
       // Portrait: strip any view-offset left over from landscape desktop framing
       if (h >= w || isCompactLayout() || interior || !yacht || !bbox || bbox.isEmpty()) {
+        if (state.view === 'hero') camera.fov = viewPose('hero').fov;
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
-        window.__dbg.view = { w, h, aspect: camera.aspect, offset: false };
+        window.__dbg.view = { w, h, aspect: camera.aspect, fov: camera.fov, offset: false, pixelRatio };
         return;
       }
       const frame = document.querySelector('.frame');
@@ -1504,13 +1443,13 @@
       const rightEdge = frame ? frame.getBoundingClientRect().right : w - 10;
       if (state.view === 'hero') {
         fitProfileStage(leftEdge, rightEdge, w, h);
-        window.__dbg.view = { w, h, aspect: camera.aspect, offset: !!(camera.view && camera.view.enabled) };
+        window.__dbg.view = { w, h, aspect: camera.aspect, fov: camera.fov, offset: !!(camera.view && camera.view.enabled), pixelRatio };
         return;
       }
       const occluded = Math.min(leftEdge + 24, w * 0.48);
       camera.setViewOffset(w, h, -Math.round(occluded * 0.88), 0, w, h);
       camera.updateProjectionMatrix();
-      window.__dbg.view = { w, h, aspect: camera.aspect, offset: true };
+      window.__dbg.view = { w, h, aspect: camera.aspect, fov: camera.fov, offset: true, pixelRatio };
     }
     function fitProfileStage(leftEdge, rightEdge, w, h) {
       const L = leftEdge + 6;
@@ -2655,8 +2594,7 @@
       requestAnimationFrame(() => {
         const onBtn = viewNav.querySelector('.view.on');
         if (onBtn) {
-          const isLand = window.matchMedia('(orientation: landscape)').matches || innerWidth > innerHeight;
-          if (!isLand) {
+          if (!isLandscape()) {
             onBtn.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
           } else {
             viewNav.scrollLeft = 0;
@@ -2967,7 +2905,6 @@
       resetTouchControls();
     });
     let viewportFrame = 0;
-    let viewportSettleTimer = 0;
     let lastOrientation = isLandscape() ? 'landscape' : 'portrait';
     function applyViewportRefresh() {
       syncLayoutClasses();
@@ -2981,20 +2918,17 @@
       updateViewsContrast();
     }
     function scheduleViewportRefresh() {
-      cancelAnimationFrame(viewportFrame);
-      clearTimeout(viewportSettleTimer);
-      // Double-rAF + one settle: sizes stabilize after window chrome finishes
+      if (viewportFrame) return;
       viewportFrame = requestAnimationFrame(() => {
-        viewportFrame = requestAnimationFrame(applyViewportRefresh);
+        viewportFrame = 0;
+        applyViewportRefresh();
       });
-      viewportSettleTimer = setTimeout(applyViewportRefresh, 180);
     }
     addEventListener('resize', scheduleViewportRefresh, { passive: true });
     addEventListener('orientationchange', scheduleViewportRefresh, { passive: true });
     addEventListener('pageshow', scheduleViewportRefresh, { passive: true });
     visualViewport?.addEventListener('resize', scheduleViewportRefresh, { passive: true });
     screen.orientation?.addEventListener?.('change', scheduleViewportRefresh);
-    new ResizeObserver(scheduleViewportRefresh).observe(document.documentElement);
     new ResizeObserver(scheduleViewportRefresh).observe(canvas);
 
     const viewsNav = document.getElementById('views');
@@ -3002,7 +2936,6 @@
     const _px = new Uint8Array(4);
     let _contrastT = 0;
     const contrastTargets = () => [
-      document.querySelector('.brand'),
       document.querySelector('.config-tabs'),
       document.getElementById('panel'),
       viewsBand
