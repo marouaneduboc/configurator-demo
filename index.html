@@ -86,11 +86,12 @@
       left: calc(14px + env(safe-area-inset-left, 0px));
       right: calc(14px + env(safe-area-inset-right, 0px));
       z-index: 20; display: flex;
-      justify-content: flex-start; align-items: flex-start;
+      justify-content: center; align-items: flex-start;
       gap: 10px; pointer-events: none;
     }
     header > * { pointer-events: auto; }
     .brand {
+      position: absolute; top: 0; left: 0;
       display: flex; flex-direction: column; align-items: flex-start;
       gap: 1px; padding: 5px 10px 6px;
       border-radius: var(--glass-r-pill);
@@ -121,8 +122,8 @@
     }
     .config-dock {
       position: relative; z-index: 30;
-      width: var(--side-w);
-      max-width: calc(100% - 148px);
+      width: max-content;
+      max-width: calc(100% - 280px);
       display: flex; justify-content: flex-start;
       flex: 0 1 auto; margin: 0;
     }
@@ -556,7 +557,11 @@
       .brand-title { font-size: 13px; }
       .brand-sub { font-size: 9px; padding-left: 25px; }
       .mark { width: 18px; height: 18px; font-size: 9px; }
-      .config-dock { max-width: calc(100% - 148px); }
+      .config-dock {
+        width: var(--side-w);
+        max-width: calc(100% - 20px);
+        margin-top: 38px;
+      }
       .step {
         padding: 5px 7px;
         font-size: 8.5px;
@@ -574,7 +579,7 @@
       }
       .brand-mark {
         right: calc(12px + env(safe-area-inset-right, 0px));
-        bottom: calc(52px + var(--safe-b));
+        bottom: calc(12px + var(--safe-b));
         width: 64px;
         opacity: 0.85;
       }
@@ -592,7 +597,11 @@
     html.narrow-portrait .brand-title { font-size: 13px; }
     html.narrow-portrait .brand-sub { font-size: 9px; padding-left: 25px; }
     html.narrow-portrait .mark { width: 18px; height: 18px; font-size: 9px; }
-    html.narrow-portrait .config-dock { max-width: calc(100% - 148px); }
+    html.narrow-portrait .config-dock {
+      width: var(--side-w);
+      max-width: calc(100% - 20px);
+      margin-top: 38px;
+    }
     html.narrow-portrait .frame { inset: 6px; }
     html.narrow-portrait .bottom-bar {
       left: calc(14px + env(safe-area-inset-left, 0px));
@@ -627,7 +636,14 @@
         min-height: 24px;
         flex: 0 0 24px;
       }
-      .config-dock { max-width: calc(100% - 148px); }
+      .config-dock {
+        width: max-content;
+        max-width: calc(100% - 210px);
+      }
+      nav.steps {
+        flex: 0 0 auto;
+        overflow-x: visible;
+      }
       .config-dock aside {
         max-height: min(62dvh, calc(100dvh - 64px - var(--safe-t)));
       }
