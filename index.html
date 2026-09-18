@@ -491,50 +491,23 @@
       left: auto; right: auto; bottom: auto;
       transform: none;
       pointer-events: auto;
-      max-width: calc(100% - 150px);
+      max-width: calc(100% - 140px);
     }
-    .bottom-logos {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-      flex-shrink: 0;
-      pointer-events: none;
-    }
-    .tiyan-mark, .tiyan-word {
-      display: block;
-      background-image: url("./assets/tiyan-logo.png?v=4");
-      background-repeat: no-repeat;
-      background-color: transparent;
-      mix-blend-mode: screen;
-      opacity: .95;
-      flex-shrink: 0;
-    }
-    .tiyan-mark {
-      width: 36px; height: 36px;
-      background-size: 100% 200%;
-      background-position: center top;
-    }
-    .tiyan-word {
-      width: 92px; height: 22px;
-      background-size: 100% 280%;
-      background-position: center bottom;
-    }
-    /* Loader-only stacked mark; runtime uses .bottom-logos split mark+word */
     .brand-mark {
       position: fixed;
-      z-index: 56;
+      z-index: 55;
       right: calc(22px + env(safe-area-inset-right, 0px));
       bottom: calc(18px + var(--safe-b));
       width: min(120px, 16vw);
       height: auto;
       pointer-events: none;
+      opacity: 1;
+      background: transparent !important;
       mix-blend-mode: screen;
       filter: none;
-      background: transparent !important;
-      opacity: 1;
     }
-    body.ready .brand-mark { display: none; }
+    #loader .brand-mark { z-index: 56; }
+    body.ready .brand-mark { z-index: 24; opacity: .95; }
     .track {
       margin: 22px auto 10px; height: 6px; width: 100%;
       background: rgba(11,31,58,.12); position: relative; overflow: hidden;
@@ -599,9 +572,13 @@
         right: calc(14px + env(safe-area-inset-right, 0px));
         bottom: calc(12px + var(--safe-b));
       }
-      .tiyan-mark { width: 30px; height: 30px; }
-      .tiyan-word { width: 78px; height: 18px; }
-      .bottom-bar .view-band { max-width: calc(100% - 128px); }
+      .brand-mark {
+        right: calc(12px + env(safe-area-inset-right, 0px));
+        bottom: calc(52px + var(--safe-b));
+        width: 64px;
+        opacity: 0.85;
+      }
+      .bottom-bar .view-band { max-width: calc(100% - 88px); }
       .cards { grid-template-columns: 1fr; }
       .frame { inset: 6px; }
     }
@@ -664,8 +641,11 @@
         font-size: 8.5px;
         letter-spacing: .08em;
       }
-      .tiyan-mark { width: 28px; height: 28px; }
-      .tiyan-word { width: 72px; height: 16px; }
+      .brand-mark {
+        right: calc(14px + env(safe-area-inset-right, 0px));
+        bottom: calc(10px + var(--safe-b));
+        width: min(78px, 12vw);
+      }
       .touch-flight {
         right: calc(10px + env(safe-area-inset-right, 0px));
         gap: 6px;
@@ -722,7 +702,7 @@
       </div>
     </div>
   </div>
-  <img class="brand-mark" src="./assets/tiyan-logo.png?v=4" alt="" width="160" height="113" decoding="async" />
+  <img class="brand-mark" src="./assets/tiyan-logo.png?v=5" alt="TIYAN" width="160" height="113" decoding="async" />
   <header>
     <div class="brand glass">
       <div class="brand-line">
@@ -752,10 +732,6 @@
   <div class="bottom-bar">
     <div class="view-band glass">
       <nav class="views" id="views"></nav>
-    </div>
-    <div class="bottom-logos" aria-label="TIYAN">
-      <span class="tiyan-mark" aria-hidden="true"></span>
-      <span class="tiyan-word" role="img" aria-label="TIYAN"></span>
     </div>
   </div>
   <button type="button" class="hint glass" id="hint" aria-label="Hide movement controls">
@@ -1504,6 +1480,7 @@
       if (h >= w || isCompactLayout() || interior || !yacht || !bbox || bbox.isEmpty()) {
         camera.clearViewOffset();
         camera.updateProjectionMatrix();
+        window.__dbg.view = { w, h, aspect: camera.aspect, offset: false };
         return;
       }
       const frame = document.querySelector('.frame');
@@ -1511,11 +1488,13 @@
       const rightEdge = frame ? frame.getBoundingClientRect().right : w - 10;
       if (state.view === 'hero') {
         fitProfileStage(leftEdge, rightEdge, w, h);
+        window.__dbg.view = { w, h, aspect: camera.aspect, offset: !!(camera.view && camera.view.enabled) };
         return;
       }
       const occluded = Math.min(leftEdge + 24, w * 0.48);
       camera.setViewOffset(w, h, -Math.round(occluded * 0.88), 0, w, h);
       camera.updateProjectionMatrix();
+      window.__dbg.view = { w, h, aspect: camera.aspect, offset: true };
     }
     function fitProfileStage(leftEdge, rightEdge, w, h) {
       const L = leftEdge + 6;
