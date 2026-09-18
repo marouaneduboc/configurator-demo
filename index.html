@@ -3151,7 +3151,10 @@
       requestAnimationFrame(tick);
       try {
         const { w, h } = viewportSize();
-        if (w !== _viewW || h !== _viewH) composeView();
+        // Mobile browsers can resize the viewport without reliably firing every
+        // orientation event. Reuse the complete refresh path so layout classes,
+        // controls, camera and canvas can never disagree about the orientation.
+        if (w !== _viewW || h !== _viewH) applyViewportRefresh();
         const dt = Math.min(clock.getDelta(), 0.05);
         if (sky.material.uniforms.time) sky.material.uniforms.time.value += dt;
         if (camTween.t < 1) {
